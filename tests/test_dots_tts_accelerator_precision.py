@@ -40,7 +40,7 @@ def test_precision_probe_failure_uses_safe_default_or_explicit_override(monkeypa
     main._load_runtime(io.BytesIO())
     assert loader.from_pretrained.call_args.kwargs["precision"] == (override or "float32")
 
-@pytest.mark.parametrize("override", [None, "bfloat16"])
+@pytest.mark.parametrize("override", [None, "bfloat16", " BF16 "])
 def test_rdna2_never_selects_bf16(monkeypatch, override):
     from engines.dots_tts import main
 

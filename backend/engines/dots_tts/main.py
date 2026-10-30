@@ -136,7 +136,7 @@ def _load_runtime(stdout):
     except Exception:
         default_precision = "float32"  # Probe failure must not force half precision.
     precision = os.environ.get("OMNIVOICE_DOTS_TTS_PRECISION", default_precision)
-    if _rocm_rdna2(torch) and precision.lower() in ("bfloat16", "bf16"):
+    if _rocm_rdna2(torch) and precision.strip().lower() in ("bfloat16", "bf16"):
         precision = "float32"
     optimize = os.environ.get("OMNIVOICE_DOTS_TTS_OPTIMIZE", "0") == "1"
 
