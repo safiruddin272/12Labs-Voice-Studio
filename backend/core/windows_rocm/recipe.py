@@ -49,8 +49,9 @@ def _validate_artifacts(section):
     for name in files:
         decoded = unquote(name)
         path = PurePosixPath(decoded)
-        if (path.is_absolute() or ".." in path.parts or "\\" in decoded
-                or any(c in decoded for c in "?#") or not decoded):
+        if (path.is_absolute() or ".." in path.parts
+                or not re.fullmatch(r"[A-Za-z0-9_./+%-]+", name)
+                or not re.fullmatch(r"[A-Za-z0-9_./+-]+", decoded)):
             raise RuntimeError("Windows ROCm recipe has an unsafe artifact path")
         if not _SHA256.fullmatch(str(hashes.get(name, ""))):
             raise RuntimeError(f"Windows ROCm recipe has no valid sha256 for {name}")

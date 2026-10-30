@@ -149,3 +149,16 @@ def test_missing_rocm10_kernel_metadata_fails_closed(monkeypatch):
             get_device_properties=lambda i: types.SimpleNamespace(gcnArchName="gfx1031")))
     monkeypatch.setattr(device_caps, "_installed_rocm_arches", lambda version: (_ for _ in ()).throw(OSError("metadata")))
     assert device_caps.arch_unsupported(fake) is not None
+
+
+def test_recipe_rejects_a_requirements_file_injection(tmp_path):
+    data = json.loads(recipe.RECIPE_PATH.read_text(encoding="utf-8"))
+    section = data["rdna2"]["torch"]
+    name = section["wheel_files"][0]
+    injected = name + "\nhttps://unapproved.example/wheel.whl"
+    section["wheel_files"][0] = injected
+    section["wheel_sha256"][injected] = section["wheel_sha256"].pop(name)
+    path = tmp_path / "recipe.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="unsafe artifact"):
+        recipe.load_recipe(path, architecture="gfx1031")
