@@ -92,6 +92,7 @@ def _query(family, engine):
                     process.kill()
                     process.wait(timeout=5)
                 except (OSError, subprocess.SubprocessError):
+                    # Cleanup may race child exit; the timed-out query still fails closed.
                     pass
             return None
         except (OSError, ValueError, subprocess.SubprocessError):

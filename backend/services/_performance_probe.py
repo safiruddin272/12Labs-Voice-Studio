@@ -73,6 +73,7 @@ def main():
             raise ValueError("Invalid failed-runtime inventory")
         engine, ready = check(family, requested, broken)
     except Exception:
+        # No readiness proof was produced; the response remains unavailable.
         pass
     Path(destination).write_text(json.dumps({"schema": 1, "family": family,
         "requested": requested, "engine": engine, "ready": ready}), encoding="utf-8")
