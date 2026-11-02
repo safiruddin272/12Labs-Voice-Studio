@@ -139,9 +139,11 @@ def test_the_device_is_resolved_for_the_engine_that_is_reported(main, engine, mo
 def test_a_stale_label_is_refreshed_after_an_engine_switch(main, engine, monkeypatch):
     _resolved_body(main)
     release = threading.Event()
+    entered = threading.Event()
     real_probe = main._probe_health_device
 
     def _slow_probe(engine_id):
+        entered.set()
         release.wait(10)
         return real_probe(engine_id)
 
@@ -150,15 +152,19 @@ def test_a_stale_label_is_refreshed_after_an_engine_switch(main, engine, monkeyp
     engine["profile"] = {"effective_device": "cpu", "routing_status": "ok"}
     main._health_device_at -= main._HEALTH_DEVICE_TTL_S + 1
 
-    served = asyncio.run(main.health())
-    # While the new engine's device is still being probed, the old pair is
-    # served whole: never the new engine with the old engine's device.
-    assert (served["engine"], served["device"]) == (
-        "cosyvoice-gguf",
-        "vulkan (AMD Radeon RX 6700 XT)",
-    )
-    release.set()
-    main._health_device_thread.join(timeout=10)
+    try:
+        asyncio.run(main.health())
+        assert entered.wait(10), "the refresh never entered its device probe"
+        served = asyncio.run(main.health())
+        # While the new engine's device is still being probed, the old pair is
+        # served whole: never the new engine with the old engine's device.
+        assert (served["engine"], served["device"]) == (
+            "cosyvoice-gguf",
+            "vulkan (AMD Radeon RX 6700 XT)",
+        )
+    finally:
+        release.set()
+        main._health_device_thread.join(timeout=10)
     refreshed = asyncio.run(main.health())
     assert (refreshed["engine"], refreshed["device"]) == ("omnivoice", "cpu")
 
