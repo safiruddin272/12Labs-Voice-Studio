@@ -10,7 +10,13 @@ MLX_LARGE = {"repo_id": "mlx-community/whisper-large-v3-mlx", "size_gb": 3.0}
 
 @pytest.fixture(autouse=True)
 def no_metal_whisper(monkeypatch):
+    from services import asr_backend, translation_engines
+
     monkeypatch.setattr(profiles, "_installed_mlx_whisper_model", lambda: None)
+    monkeypatch.setattr(profiles, "active_asr_selection", lambda: asr_backend.active_backend_id())
+    monkeypatch.setattr(profiles, "selection_ready", lambda family, engine:
+                        translation_engines.is_ready(engine, import_check=False)
+                        if family == "translation" else True)
 
 
 def test_diarisation_is_applicable_only_with_a_real_runtime_choice(monkeypatch):

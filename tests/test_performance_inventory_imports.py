@@ -19,7 +19,7 @@ def test_selectable_translation_inventory_never_imports_runtime(monkeypatch):
     assert profiles._installed_selectable_families() == {"translation"}
 
 
-def test_family_translation_selection_uses_inventory_only_readiness(monkeypatch):
+def test_family_translation_selection_validates_in_child_without_parent_import(monkeypatch):
     profiles = importlib.import_module("services.performance_profiles")
     translation = importlib.import_module("services.translation_engines")
     prefs = importlib.import_module("core.prefs")
@@ -28,6 +28,7 @@ def test_family_translation_selection_uses_inventory_only_readiness(monkeypatch)
         assert import_check is False, "Preset selection imported translation runtime"
         return engine == "nllb"
     monkeypatch.setattr(translation, "is_ready", installed)
+    monkeypatch.setattr(profiles, "selection_ready", lambda family, engine: engine == "nllb")
     assert profiles._activate_translation_model("quality")["engine"] == "nllb"
 
 
@@ -101,10 +102,11 @@ def test_profile_auto_selection_does_not_execute_asr_availability_imports(monkey
     monkeypatch.setattr(tts, "active_backend_id", lambda: "custom")
     monkeypatch.setattr(diarization, "installed_backends", lambda: set())
     monkeypatch.setattr(profiles, "_installed_selectable_families", lambda: set())
+    monkeypatch.setattr(profiles, "active_asr_selection", lambda: "pytorch-whisper")
     monkeypatch.setattr(inventory, "profile_plan", lambda *args: {"families": {
         family: {"tier": "balanced", "selection": None, "reason": "kept"}
         for family in profiles._PERFORMANCE_FAMILIES}})
-    assert profiles.profile_state()["selections"]["asr"]["engine"] in {"whisperx", "faster-whisper"}
+    assert profiles.profile_state()["selections"]["asr"]["engine"] == "pytorch-whisper"
 
 
 def test_inventory_context_never_suppresses_real_runtime_preflight(monkeypatch):

@@ -154,8 +154,11 @@ The 16-step CPU-only OmniVoice test exceeded a five-minute test deadline;
 four-step CPU speech completed and transcribed correctly, but was much slower
 than GPU execution. Model loading and AudioSeal startup are separate from warm
 generation. Startup performance inventory checks package/model metadata rather
-than importing Transformers or every installed model runtime; real execution
-still performs its normal load-time validation.
+than importing Transformers or every installed model runtime into the API.
+Before saving changed engine selections, presets validate runtime readiness in
+a bounded offline child process. Failed checks preserve the existing selection;
+automatic ASR selection uses the same isolated validation and retains fallback.
+These model-free checks do not replace normal model load-time validation.
 
 IndexTTS keeps its Python 3.10/3.11 requirement; CosyVoice keeps Torch 2.7;
 VoxCPM2 keeps Torch 2.11. Neither cp312 main-environment recipe is applied to these

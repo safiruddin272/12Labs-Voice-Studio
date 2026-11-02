@@ -116,6 +116,8 @@ RDNA 2 RX 6000 GPUs. Its separately pinned CTranslate2 build includes native
 execution. RX 6700 XT tests also cover native Torch speech generation and
 PyTorch Whisper. ROCm 10 faster-whisper uses a separate inference process to
 preserve safe CPU selection and fallback. Other cards and workloads retain the qualification limits in the guide.
+Performance presets validate changed engine selections in an offline child
+process before saving them, preserving fallback when an installed runtime fails.
 
 ## Get started
 

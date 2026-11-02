@@ -15,6 +15,9 @@ def current_modules(monkeypatch):
     profiles = importlib.import_module("services.performance_profiles")
     inventory = importlib.import_module("services.performance_inventory")
     monkeypatch.setattr(importlib.import_module("services"), "performance_profiles", profiles)
+    monkeypatch.setattr(profiles, "active_asr_selection", lambda:
+                        importlib.import_module("services.asr_backend").active_backend_id())
+    monkeypatch.setattr(profiles, "selection_ready", lambda *args: True)
 
 
 @pytest.fixture
