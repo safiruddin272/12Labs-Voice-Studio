@@ -111,11 +111,18 @@ def test_an_unavailable_engine_falls_back_to_the_torch_device(main, engine):
     assert _resolved_body(main)["device"] == "torch-fallback"
 
 
-def test_a_failing_engine_profile_falls_back_to_the_torch_device(main, engine):
-    engine["profile"] = RuntimeError("native probe crashed")
-    body = _resolved_body(main)
+def test_a_failing_engine_profile_falls_back_to_the_torch_device(main, engine, caplog):
+    engine["profile"] = RuntimeError("native probe crashed at /home/private/models")
+    with caplog.at_level("DEBUG", logger=main.logger.name):
+        body = _resolved_body(main)
     assert body["status"] == "ok"
     assert body["device"] == "torch-fallback"
+    records = [r for r in caplog.records if r.message.startswith("health:")]
+    assert len(records) == 1
+    assert "RuntimeError" in records[0].message
+    assert "native probe crashed" not in caplog.text
+    assert "/home/private" not in caplog.text
+    assert records[0].exc_info is None
 
 
 def test_the_device_is_resolved_for_the_engine_that_is_reported(main, engine, monkeypatch):

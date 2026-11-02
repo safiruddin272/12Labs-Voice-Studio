@@ -2093,8 +2093,8 @@ def _probe_health_device(engine_id: str | None) -> str:
                 caps.device_name if family == caps.family else ""
             )
             return f"{family} ({name})" if name else family
-    except Exception:  # noqa: BLE001 - fall back to the torch device below
-        logger.debug("health: engine compute profile unavailable", exc_info=True)
+    except Exception as exc:  # noqa: BLE001 - fall back to the torch device below
+        logger.debug("health: engine compute profile unavailable (%s)", type(exc).__name__)
     return _torch_device_label()
 
 
