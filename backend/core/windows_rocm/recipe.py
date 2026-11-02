@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import unquote
 
 from .failures import VerificationFailure
+from .ct2_recipe import validate_ct2_recipe
 
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 _ALLOWED_SOURCES = frozenset({
@@ -63,6 +64,8 @@ def load_recipe(path=None, *, architecture=None):
     if recipe["schema_version"] != 1:
         raise RuntimeError("Unsupported Windows ROCm recipe schema")
     variant = recipe["rdna2"]
+    for config in (recipe["ctranslate2"], variant["ctranslate2"]):
+        validate_ct2_recipe(config)
     for torch in (recipe["torch"], variant["torch"]):
         if torch["find_links"] not in _ALLOWED_SOURCES:
             raise RuntimeError("Windows ROCm recipe has an unapproved source")
@@ -75,7 +78,8 @@ def load_recipe(path=None, *, architecture=None):
         common = variant["runtime"]
         selected_runtime = {key: common[key] + device[key] for key in ("packages", "wheel_files")}
         selected_runtime["wheel_sha256"] = common["wheel_sha256"] | device["wheel_sha256"]
-        return {**recipe, "gpu_architectures": [arch], "torch": variant["torch"], "runtime": selected_runtime}
+        return {**recipe, "gpu_architectures": [arch], "torch": variant["torch"],
+                "runtime": selected_runtime, "ctranslate2": variant["ctranslate2"]}
     return recipe
 
 

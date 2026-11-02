@@ -771,7 +771,7 @@ class WhisperXBackend(ASRBackend):
 
     @classmethod
     def is_available(cls) -> tuple[bool, str]:
-        from core.windows_rocm.pipelines import pipeline_error, prepare_audio_imports
+        from core.windows_rocm.pipelines import whisperx_error as pipeline_error, prepare_audio_imports
 
         if reason := pipeline_error():
             return False, reason
@@ -800,7 +800,7 @@ class WhisperXBackend(ASRBackend):
         self._ensure_asr()
 
     def _ensure_asr(self):
-        from core.windows_rocm.pipelines import PipelineCompatibilityError, pipeline_error, prepare_audio_imports
+        from core.windows_rocm.pipelines import PipelineCompatibilityError, whisperx_error as pipeline_error, prepare_audio_imports
 
         if reason := pipeline_error(self._device):
             raise PipelineCompatibilityError(reason)
@@ -1146,6 +1146,12 @@ class FasterWhisperBackend(ASRBackend):
     gpu_compat = ("cuda", "cpu")
 
     @classmethod
+    def runtime_runs_out_of_process(cls):
+        from core.windows_rocm.asr_isolation import isolation_required
+
+        return isolation_required()
+
+    @classmethod
     def runtime_gpu_compat(cls):
         from core.windows_rocm.ct2 import gpu_compatible
 
@@ -1166,6 +1172,10 @@ class FasterWhisperBackend(ASRBackend):
 
     @classmethod
     def is_available(cls) -> tuple[bool, str]:
+        from core.windows_rocm.asr_isolation import availability_status as isolated_status
+
+        if (status := isolated_status()) is not None:
+            return status
         from core.windows_rocm.ct2 import availability_status
 
         if (status := availability_status()) is not None:
@@ -1188,6 +1198,10 @@ class FasterWhisperBackend(ASRBackend):
         return _ctranslate2_cudnn_ok()
 
     def _ensure_model(self):
+        from core.windows_rocm.asr_isolation import ensure_isolated
+
+        if ensure_isolated(self):
+            return
         if self._model is not None:
             return
         ok, detail = _ctranslate2_execstack_ok()
@@ -1273,6 +1287,12 @@ class FasterWhisperBackend(ASRBackend):
                    temperature: float | None = None,
                    task: str = "transcribe") -> dict:
         self._ensure_model()
+        if getattr(self, "_rocm_asr_proxy", None) is not None:
+            from core.windows_rocm.asr_isolation import transcribe_isolated
+
+            return transcribe_isolated(
+                self, audio_path, word_timestamps=word_timestamps, language=language,
+                initial_prompt=initial_prompt, temperature=temperature, task=task)
         logger.info(
             "faster-whisper transcribing %s (word_timestamps=%s)",
             audio_path, word_timestamps,
@@ -1332,6 +1352,10 @@ class FasterWhisperBackend(ASRBackend):
         # never assigns — so the actual model in self._model was never freed and
         # a warm faster-whisper stayed resident for the life of the process.
         # Clear the real handle so the model is released.
+        from core.windows_rocm.asr_isolation import unload_isolated
+
+        if unload_isolated(self):
+            return
         self._model = None
         self._asr = None  # harmless if a subclass ever used it; keeps idempotence
         import gc
@@ -1342,6 +1366,13 @@ class FasterWhisperBackend(ASRBackend):
                 torch.cuda.empty_cache()
         except Exception:
             pass
+
+    def execution_evidence_loaded(self) -> bool:
+        from core.windows_rocm.asr_isolation import isolation_required, evidence_loaded
+
+        if isolation_required() or getattr(self, "_rocm_asr_proxy", None) is not None:
+            return evidence_loaded(self)
+        return super().execution_evidence_loaded()
 
 
 # ── MLX Whisper (Apple Silicon optional) ────────────────────────────────────
@@ -2887,7 +2918,8 @@ def list_backends() -> list[dict]:
             _LAST_ERRORS.pop(bid, None)
         else:
             _LAST_ERRORS[bid] = scrub_text(msg)
-        isolation = "subprocess" if getattr(cls, "_is_subprocess_isolated", False) else "in-process"
+        implicit_isolation = bool(getattr(cls, "runtime_runs_out_of_process", lambda: False)())
+        isolation = "subprocess" if getattr(cls, "_is_subprocess_isolated", False) or implicit_isolation else "in-process"
         routing = runtime_compute_profile(cls, caps)
         gpu_compat = routing["gpu_compat"]
         routing["routing_reason"] = scrub_text(routing["routing_reason"]) if routing["routing_reason"] else None
@@ -2896,7 +2928,7 @@ def list_backends() -> list[dict]:
         # cannot leave ghost GPU/provider evidence in diagnostics.
         instance = (
             _ISOLATED_INSTANCES.get(bid)
-            if isolation == "subprocess"
+            if isolation == "subprocess" and not implicit_isolation
             else _RUNTIME_INSTANCES.get(bid)
         )
         execution_evidence = execution_snapshot(

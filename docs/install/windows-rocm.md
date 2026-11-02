@@ -28,10 +28,10 @@ models.
 - Space for the SDK, Python environment and temporary package downloads;
   optional engine environments and model weights require additional space.
 
-Both recipes select x64 Python **3.12** and the exact HIP CTranslate2
-**4.8.2** archive/wheel/DLL hashes. RDNA 3, 3.5 and 4 retain ROCm **7.2.1**,
+Both recipes select x64 Python **3.12** and exact HIP CTranslate2
+archive/wheel/DLL hashes. RDNA 3, 3.5 and 4 retain CTranslate2 **4.8.2**, ROCm **7.2.1**,
 Torch/audio **2.9.1+rocm7.2.1** and vision **0.24.1+rocm7.2.1**. RDNA 2
-uses ROCm **10.0.0**, Torch **2.13.0+rocm10.0.0**, audio
+uses the expanded-target CTranslate2 **4.8.4** dependency below, ROCm **10.0.0**, Torch **2.13.0+rocm10.0.0**, audio
 **2.11.0.2+rocm10.0.0** and vision **0.28.0+rocm10.0.0**. Setup identifies
 the GPU by PCI ID and installs only that architecture's Torch, vision and SDK
 device packages, with native kernels and no `HSA_OVERRIDE_GFX_VERSION`. Mixed
@@ -39,13 +39,30 @@ AMD architectures are refused because selecting the wrong device package
 would be unsafe. Windows ARM64, Windows 10 and other architectures remain
 outside this recipe's scope. A standalone HIP SDK on PATH is insufficient.
 
+Repairs require an available AMD GPU inventory and refuse to replace an
+installed ROCm 7 family with ROCm 10, or vice versa. Use a fresh runtime for an
+intentional family change; a failed detection must never downgrade a working install.
+
 ### What setup downloads, and how it is checked
 
 Setup downloads from AMD's `repo.radeon.com` for the existing recipe or
-`stable.repo.amd.com` for RDNA 2, and the OpenNMT/CTranslate2 GitHub release
-(the HIP CTranslate2 archive). Every file has a SHA-256 in the recipe, and setup refuses a file whose
+`stable.repo.amd.com` for RDNA 2. The existing recipe uses the OpenNMT/CTranslate2
+release archive. RDNA 2 uses the [expanded-target dependency mirror](https://github.com/dutch2005/VoiceStudio/releases/tag/ct2-rocm-4.8.4-9a7a074),
+which preserves the unmodified bytes from OpenNMT maintainer `jordimas`'s
+[build at `9a7a074`](https://github.com/jordimas/CTranslate2/actions/runs/41108554536).
+The mirror is public and requires no GitHub account or token; it avoids depending
+on an expiring Actions artifact. This is an experimental dependency, not a new
+official OpenNMT or VoiceStudio application release.
+Every file has a SHA-256 in the recipe, and setup refuses a file whose
 bytes differ. Every other package keeps the version your environment already
 has, so the overlay never quietly upgrades dependencies.
+
+Official CTranslate2 4.8.2 and 4.8.4 Windows wheels omit `gfx1031`; both can
+detect an RX 6700 XT and load a model yet fail at inference with
+`hipErrorInvalidImage`. The expanded build contains the missing kernels.
+Changing the version number alone or bypassing binary checks is insufficient.
+See the [hardware report](https://github.com/OpenNMT/CTranslate2/issues/2137#issuecomment-6572396042)
+for provenance, hashes and the limits of the short-clip tests.
 
 Before this release, `OMNIVOICE_TORCH_VARIANT=rocm` was ignored on Windows. It
 now selects this stack. If it is already set on a machine with a working CUDA
@@ -103,7 +120,9 @@ Electron's setup log, using **that environment's interpreter**:
 Both commands without speech inputs perform **model-free** checks: exact ABI and
 package versions, native audio/vision imports, the pinned HIP CT2 DLL, supported
 GPU architecture, synchronized Torch arithmetic with checked results, and CT2
-GPU/float16 discovery. A timeout, crash or CPU fallback fails readiness. This
+GPU/float16 discovery plus a checked native GPU FP32 → FP16 → FP32 conversion.
+The conversion executes CT2's own kernels and rejects discovery-only successes.
+A timeout, crash, wrong result or CPU fallback fails readiness. This
 proves neither speech inference nor WhisperX/MIOpen compatibility.
 
 For a separate **local CT2 speech** check, supply an already-installed local CT2
@@ -123,8 +142,9 @@ inference are reported as different scopes.
 | Path | Windows ROCm behavior |
 | --- | --- |
 | Main Torch TTS and voice-cloning audio input | Uses the matched main environment; local soundfile compatibility preserves explicit soundfile input on torchaudio 2.9 and later. Model/engine kernels still need real hardware testing. |
-| Faster-whisper, including the crash-isolated worker | GPU is admitted only for the pinned HIP binary plus bounded local verification; CPU overrides remain effective. Auto selection can prefer this verified basic-ASR path. |
-| WhisperX, pyannote speaker detection, wav2vec2 GPU alignment | GPU execution is gated before imports/cached pipelines: MIOpen Unicode-path and SDK-header compatibility is unverified. Choose CPU in Settings → Performance (`OMNIVOICE_DEVICE=cpu`) to use these pipelines. |
+| Faster-whisper, including the crash-isolated worker | GPU is admitted only for the pinned HIP binary plus bounded local verification. ROCm 10 runs normal faster-whisper in a separate inference process for both GPU and CPU, preserving CPU selection and memory fallback without mixing Torch's LLVM OpenMP with CT2's Intel OpenMP. Model, VAD, timestamps and decode/request options are preserved. |
+| WhisperX transcription | ROCm 10 refuses this in-process CT2 path before imports or cached pipeline use because its CPU execution/fallback mixes incompatible OpenMP runtimes. Use faster-whisper or PyTorch Whisper. The ROCm 7 recipe retains its existing CPU path; GPU execution remains unverified. |
+| pyannote speaker detection, wav2vec2 alignment | GPU execution is gated before imports/cached pipelines: MIOpen Unicode-path and SDK-header compatibility is unverified. CPU selection retains the existing Torch pipeline; it is separate from WhisperX's CT2 transcription and is not certified by the basic-ASR tests. |
 | Unavailable forced alignment | Keeps the transcript and native word timestamps; alignment precision can be lower. It does not discard requested speech or translation content. |
 | Optional engine sidecars | Separate environments and compatibility. Main readiness never certifies them. |
 
@@ -165,7 +185,8 @@ native kernels and verification rejects an override. Do not delete voices, proje
 optional-engine environments to repair the main runtime.
 
 Only explicitly started installation downloads AMD packages and the pinned
-OpenNMT/CTranslate2 GitHub release, with normal dependency resolution through
+OpenNMT/CTranslate2 GitHub release or the pinned expanded-target dependency mirror,
+with normal dependency resolution through
 package indexes. Verification and local smoke are offline. This installation
 work incorporates focused contributions from
 [#2600](https://github.com/debpalash/VoiceStudio/pull/2600) and

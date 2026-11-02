@@ -110,6 +110,12 @@ Start with **VoiceStudio** (default, powered by k2-fsa/OmniVoice), or pick from 
 
 Desktop and phone installers are on the [latest release](https://github.com/debpalash/VoiceStudio/releases/latest); Docker images come from GHCR. No GPU? The app is fully usable on the CPU, just slower. Native GGUF engines can also use Vulkan on AMD, Intel and NVIDIA GPUs; OmniVoice GGUF picks its GPU and model size automatically on Windows and Linux ([OmniVoice](docs/engines/omnivoice-gguf.md#vulkan-acceleration), [CosyVoice](docs/engines/cosyvoice-gguf.md)). Speed by engine and hardware: [performance](docs/performance.md).
 
+Experimental [Windows ROCm setup](docs/install/windows-rocm.md) also supports
+RDNA 2 RX 6000 GPUs. Its separately pinned CTranslate2 build includes native
+`gfx1031` kernels for RX 6700 XT transcription; setup checks actual GPU kernel
+execution. ROCm 10 faster-whisper uses a separate inference process to preserve
+safe CPU selection and fallback. Other cards and workloads retain the qualification limits in the guide.
+
 ## Get started
 
 **macOS / Linux**

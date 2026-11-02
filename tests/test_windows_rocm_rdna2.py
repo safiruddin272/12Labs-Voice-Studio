@@ -1,12 +1,18 @@
 """Windows ROCm RDNA 2 uses pinned native kernels and safe precision."""
 import json
+import importlib
 import re
 import types
 
 import pytest
 
-from core import device_caps
-from core.windows_rocm import install, recipe
+@pytest.fixture(autouse=True)
+def application_modules():
+    """Bind canonical modules for each test after any sys.modules replacement."""
+    global device_caps, install, recipe
+    device_caps = importlib.import_module("core.device_caps")
+    install = importlib.import_module("core.windows_rocm.install")
+    recipe = importlib.import_module("core.windows_rocm.recipe")
 
 
 def test_recipe_has_rdna2_native_variant():
