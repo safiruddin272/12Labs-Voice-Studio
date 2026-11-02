@@ -1,78 +1,112 @@
 <div align="center">
-  <img src="../../docs/logo.png" alt="VoiceStudio" width="88" />
-  <h1>VoiceStudio</h1>
+  <h1><sub><img src="../../docs/logo.png" alt="" width="36" height="36" /></sub> VoiceStudio</h1>
   <p>
     <a href="https://trendshift.io/repositories/28176?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-28176" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/28176" alt="Trendshift의 VoiceStudio 인기 순위 배지" width="220" height="48" /></a>
   </p>
-  <p><strong>내 기기에서 돌아가는 보이스 스튜디오: 646개 언어로 음성 복제, 보이스 디자인, 더빙, 받아쓰기, 음성 전사, 내레이션.</strong><br />
-  내 컴퓨터와 휴대폰에서 실행됩니다. 계정도 API 키도 필요 없으며, 사용자가 허락하지 않는 한 어떤 데이터도 기기 밖으로 나가지 않습니다.</p>
+  <h2>AI 보이스 스튜디오를, 내 기기에서.</h2>
+  <h3>646개 언어로 음성 복제, 보이스 디자인, 더빙, 받아쓰기, 전사, 내레이션을 만드세요.</h3>
+  <p>노트북, 데스크톱, 서버, 휴대폰, 태블릿 등에서 실행됩니다</p>
   <p>
     <a href="https://voicestudio.sh/?utm_source=github&utm_medium=readme&utm_campaign=project">웹사이트</a> ·
     <a href="https://github.com/debpalash/VoiceStudio/releases/latest">내려받기</a> ·
     <a href="#시작하기">시작 안내</a> ·
     <a href="#문서">문서</a> ·
     <a href="https://discord.gg/bzQavDfVV9">Discord</a> ·
-    <a href="../../README.md">English</a> ·
-    <a href="README_CN.md">简体中文</a> ·
-    <a href="README_JA.md">日本語</a> ·
-    <a href="README_RU.md">Русский</a>
+    <a href="../../README.md">English</a> · <a href="README_CN.md">简体中文</a> · <a href="README_JA.md">日本語</a> · <a href="README_RU.md">Русский</a>
   </p>
   <p>
-    <a href="https://github.com/debpalash/VoiceStudio/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/debpalash/VoiceStudio/ci.yml?branch=main" alt="CI 상태" /></a>
-    <a href="https://github.com/debpalash/VoiceStudio/releases/latest"><img src="https://img.shields.io/github/v/release/debpalash/VoiceStudio" alt="최신 릴리스" /></a>
-    <a href="../../LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue" alt="AGPL-3.0 라이선스" /></a>
-    <a href="https://supermetry.com"><img src="https://app.supermetry.com/px/zfjiv7psp4ed.svg?c=VoiceStudio&style=stats" alt="조회수" /></a>
+    <a href="https://github.com/debpalash/VoiceStudio/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/debpalash/VoiceStudio/ci.yml?branch=main&amp;style=flat-square&amp;label=build&amp;labelColor=27272a" alt="CI 상태" /></a>
+    <a href="https://github.com/debpalash/VoiceStudio/releases/latest"><img src="https://img.shields.io/github/v/release/debpalash/VoiceStudio?style=flat-square&amp;labelColor=27272a&amp;color=52525b" alt="최신 릴리스" /></a>
+    <a href="../../LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-52525b?style=flat-square&amp;labelColor=27272a" alt="AGPL-3.0 라이선스" /></a>
+    <a href="https://supermetry.com"><img src="https://app.supermetry.com/px/zfjiv7psp4ed.svg?c=VoiceStudio" alt="조회수" /></a>
   </p>
   <p>
     <sub>전략 스폰서</sub><br />
-    <a href="https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="48" /></picture></a>
+    <a href="https://github.com/debpalash/OpenGTM?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opengtm-dark.svg" /><img src="../../docs/sponsors/opengtm.svg" alt="OpenGTM" height="32" align="middle" /></picture></a>
+    <a href="https://github.com/debpalash/Opal?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opal-dark.svg" /><img src="../../docs/sponsors/opal.svg" alt="Opal" height="32" align="middle" /></picture></a>
+    <a href="https://github.com/velixio/supermetry?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="32" align="middle" /></picture></a>
   </p>
   <p>
-    <a href="https://snapcraft.io/voicestudio"><img src="https://snapcraft.io/en/dark/install.svg" alt="Get it from the Snap Store" height="40" /></a>
+    <sub>특별 후원사</sub><br />
+    <a href="https://app.spicrawl.com/signup?utm_source=voicestudio&amp;utm_medium=github_readme&amp;utm_campaign=special_sponsor&amp;utm_content=logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/spicrawl-dark.svg" /><img src="../../docs/sponsors/spicrawl.svg" alt="Spicrawl" height="32" align="middle" /></picture></a>
   </p>
 </div>
 
-![앱 둘러보기: 음성 복제, 보이스 디자인, 더빙, 모델 관리](../../docs/media/electron/voicestudio.gif)
+<p align="center">
+  <a href="../../docs/media/electron/voicestudio.mp4">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce) and (max-width: 768px)" srcset="../../docs/media/electron/voice-cloning.webp" />
+      <source media="(prefers-reduced-motion: reduce)" srcset="../../docs/media/electron/voice-cloning.png" />
+      <img src="../../docs/media/electron/voicestudio.gif" alt="앱 둘러보기: 음성 복제, 보이스 디자인, 더빙, 모델 관리" width="100%" />
+    </picture>
+  </a><br />
+  <sub>데모 작업 공간 · 기본 다크 테마 · <a href="../../docs/media/electron/voicestudio.mp4">HD 둘러보기</a></sub>
+</p>
+
+<p align="center">
+  <a href="https://github.com/debpalash/VoiceStudio/releases/latest"><img src="https://img.shields.io/badge/%EB%82%B4%EB%A0%A4%EB%B0%9B%EA%B8%B0-993f61?style=for-the-badge&amp;logo=github&amp;logoColor=ffffff" alt="내려받기" height="24" /></a>
+  <a href="#시작하기"><img src="https://img.shields.io/badge/%EC%8B%9C%EC%9E%91%20%EC%95%88%EB%82%B4-27272a?style=for-the-badge" alt="시작 안내" height="24" /></a>
+</p>
 
 ## 할 수 있는 일
 
-| 만들기 | 제작하기 | 연결하기 |
-| :--- | :--- | :--- |
-| 목소리를 복제하거나 직접 디자인 | 타이밍을 맞춘 음성으로 영상 더빙 | 에이전트를 위한 로컬 API와 MCP |
-| 플로팅 위젯으로 받아쓰기 | 스토리, 오디오북, 일괄 작업 | 재사용 가능한 레시피와 감시 폴더 |
-
-기본 엔진인 **VoiceStudio**(k2-fsa/OmniVoice 기반)로 시작하거나, 모델 관리자에서 수십 가지 다른 엔진 중 하나를 고르세요. [기능 및 엔진 카탈로그](../../docs/feature-catalog.md)를 참고하세요.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/voice-cloning.png"><img src="../../docs/media/electron/voice-cloning.webp" alt="기본 제공 데모 음성이 열린 음성 복제 워크스페이스" width="100%" /></a><br />
+      <strong><a href="../../docs/audio-quality.md">음성 복제</a></strong><br />
+      깨끗한 참조 녹음으로 익숙한 목소리의 음성을 생성하세요.
+    </td>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/dubbing.png"><img src="../../docs/media/electron/dubbing.webp" alt="영상 더빙 워크스페이스" width="100%" /></a><br />
+      <strong><a href="../../docs/electron-dubbing.md">영상 더빙</a></strong><br />
+      영상을 번역하고 원본 타이밍에 맞춰 더빙하세요.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/voice-design.png"><img src="../../docs/media/electron/voice-design.webp" alt="보이스 디자인 워크스페이스에서 목소리를 묘사하기" width="100%" /></a><br />
+      <strong><a href="../../docs/electron-voice-design.md">보이스 디자인</a></strong><br />
+      원하는 목소리를 글로 설명하고 생성하세요.
+    </td>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/models.png"><img src="../../docs/media/electron/models.webp" alt="로컬 음성 모델 설치 및 관리" width="100%" /></a><br />
+      <strong><a href="../../docs/downloading-models.md">로컬 모델</a></strong><br />
+      엔진을 고르고 필요한 모델만 내려받으세요.
+    </td>
+  </tr>
+</table>
 
 <details>
-<summary><strong>스크린샷</strong></summary>
+<summary><strong>스크린샷 더 보기</strong></summary>
 
 <table>
   <tr>
-    <td><img src="../../docs/media/electron/voice-cloning.png" alt="기본 제공 데모 음성이 열린 음성 복제 워크스페이스" width="100%" /></td>
-    <td><img src="../../docs/media/electron/dubbing.png" alt="영상 더빙 워크스페이스" width="100%" /></td>
+    <td width="50%"><a href="../../docs/media/electron/overview.png"><img src="../../docs/media/electron/overview.webp" alt="작업 공간 개요" width="100%" /></a><br /><strong>작업 공간 개요</strong></td>
+    <td width="50%"><a href="../../docs/media/electron/model-packs.png"><img src="../../docs/media/electron/model-packs.webp" alt="모델 팩" width="100%" /></a><br /><strong>모델 팩</strong></td>
   </tr>
-  <tr><td align="center">음성 복제</td><td align="center">영상 더빙</td></tr>
-  <tr>
-    <td><img src="../../docs/media/electron/voice-design.png" alt="보이스 디자인 워크스페이스에서 목소리를 묘사하기" width="100%" /></td>
-    <td><img src="../../docs/media/electron/models.png" alt="로컬 음성 모델 설치 및 관리" width="100%" /></td>
-  </tr>
-  <tr><td align="center">보이스 디자인</td><td align="center">로컬 모델</td></tr>
 </table>
 
 </details>
 
+- **받아쓰기와 전사** — 플로팅 받아쓰기 위젯과 로컬 전사
+- **내레이션과 일괄 처리** — 스토리, 오디오북, 대기열 작업
+- **연결과 자동화** — 로컬 API, MCP, 재사용 가능한 레시피와 감시 폴더
+
+기본 엔진인 **VoiceStudio**(k2-fsa/OmniVoice 기반)로 시작하거나, 모델 관리자에서 수십 가지 다른 엔진 중 하나를 고르세요. [기능 및 엔진 카탈로그](../../docs/feature-catalog.md)를 참고하세요.
+
 ## 지원 플랫폼
 
-| 플랫폼 | 다운로드 | 가속 | 상태 |
-| :--- | :--- | :--- | :--- |
-| **macOS** (Apple Silicon) | `.dmg` · [가이드](../../docs/install/macos.md) | Metal (MPS) | 안정 |
-| **Windows 10/11** (x64) | `.exe` · [가이드](../../docs/install/windows.md) | NVIDIA CUDA · [AMD ROCm (선택)](../../docs/install/windows-rocm.md) · CPU | 안정 |
-| **Linux** (x64) | `.AppImage` · `.deb` · [`snap`](https://snapcraft.io/voicestudio) · [Nix](../../docs/install/nix.md) · [가이드](../../docs/install/linux.md) | NVIDIA CUDA · CPU | 안정 |
-| **Docker** | [`ghcr.io/debpalash/voicestudio`](../../docs/install/docker.md) | NVIDIA CUDA · AMD ROCm | 안정 |
-| **Android** 10+ | `.apk` · [가이드](../../docs/mobile.md#install) | 기기에서 실행, 오프라인 지원 | 프리뷰 |
-| **iPhone / iPad** (iOS 17+) | `.ipa` (사이드로드) · [가이드](../../docs/mobile.md#install) | 기기에서 실행, 오프라인 지원 | 프리뷰 |
-| **Windows on ARM** | `.exe` · [가이드](../../docs/install/windows.md) | CPU (x64 백엔드를 에뮬레이션으로 실행) | 실험적 |
-| **Intel Mac** | `.dmg` · [이유](../../docs/install/macos.md) | 앱 UI만 지원, 원격 백엔드에 연결 | 제한적 |
+| 플랫폼 및 상태 | 다운로드 및 가속 |
+| :--- | :--- |
+| <img src="../../docs/assets/platforms/apple.svg" alt="" width="20" height="20" />&nbsp;**macOS** (Apple Silicon)<br /><sub>안정</sub> | `.dmg` · [가이드](../../docs/install/macos.md)<br /><sub>Metal (MPS)</sub> |
+| <img src="../../docs/assets/platforms/windows.svg" alt="" width="20" height="20" />&nbsp;**Windows 10/11** (x64)<br /><sub>안정</sub> | `.exe` · [가이드](../../docs/install/windows.md)<br /><sub>NVIDIA CUDA · [AMD ROCm (선택)](../../docs/install/windows-rocm.md) · CPU</sub> |
+| <img src="../../docs/assets/platforms/linux.svg" alt="" width="20" height="20" />&nbsp;**Linux** (x64)<br /><sub>안정</sub> | `.AppImage` · `.deb` · <a href="https://snapcraft.io/voicestudio"><img src="https://img.shields.io/badge/Snap%20Store-27272a?style=flat-square&amp;logo=snapcraft&amp;logoColor=ffffff" alt="Snap Store" height="20" /></a> · [Nix](../../docs/install/nix.md) · [가이드](../../docs/install/linux.md)<br /><sub>NVIDIA CUDA · CPU</sub> |
+| <img src="../../docs/assets/platforms/docker.svg" alt="" width="20" height="20" />&nbsp;**Docker**<br /><sub>안정</sub> | [GHCR](../../docs/install/docker.md "ghcr.io/debpalash/voicestudio")<br /><sub>NVIDIA CUDA · AMD ROCm</sub> |
+| <img src="../../docs/assets/platforms/android.svg" alt="" width="20" height="20" />&nbsp;**Android** 10+<br /><sub>프리뷰</sub> | `.apk` · [가이드](../../docs/mobile.md#install)<br /><sub>기기에서 실행, 오프라인 지원</sub> |
+| <img src="../../docs/assets/platforms/apple.svg" alt="" width="20" height="20" />&nbsp;**iPhone / iPad** (iOS 17+)<br /><sub>프리뷰</sub> | `.ipa` (사이드로드) · [가이드](../../docs/mobile.md#install)<br /><sub>기기에서 실행, 오프라인 지원</sub> |
+| <img src="../../docs/assets/platforms/windows.svg" alt="" width="20" height="20" />&nbsp;**Windows on ARM**<br /><sub>실험적</sub> | `.exe` · [가이드](../../docs/install/windows.md)<br /><sub>CPU (x64 백엔드를 에뮬레이션으로 실행)</sub> |
+| <img src="../../docs/assets/platforms/apple.svg" alt="" width="20" height="20" />&nbsp;**Intel Mac**<br /><sub>제한적</sub> | `.dmg` · [이유](../../docs/install/macos.md)<br /><sub>앱 UI만 지원, 원격 백엔드에 연결</sub> |
 
 데스크톱과 휴대폰 설치 파일은 [최신 릴리스](https://github.com/debpalash/VoiceStudio/releases/latest)에 있고, Docker 이미지는 GHCR에서 받을 수 있습니다. GPU가 없나요? CPU만으로도 모든 기능을 쓸 수 있으며, 속도만 느립니다. 선택 기능인 네이티브 GGUF 엔진은 AMD GPU를 포함해 Vulkan도 사용할 수 있습니다([OmniVoice](../../docs/engines/omnivoice-gguf.md#vulkan-acceleration), [CosyVoice](../../docs/engines/cosyvoice-gguf.md)). 엔진과 하드웨어별 속도는 [성능](../../docs/performance.md) 문서를 참고하세요.
 
@@ -147,13 +181,25 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 VoiceStudio는 무료이며, 뒤에 유료 클라우드도 없습니다. 후원사 덕분에 개발이 계속됩니다. 후원금은 메인테이너의 작업 시간, 테스트 하드웨어, 코드 서명과 릴리스 인프라에 쓰입니다.
 
 <p>
-    <a href="https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="48" /></picture></a>
+    <a href="https://github.com/debpalash/OpenGTM?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opengtm-dark.svg" /><img src="../../docs/sponsors/opengtm.svg" alt="OpenGTM" height="48" align="middle" /></picture></a>
+    <a href="https://github.com/debpalash/Opal?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opal-dark.svg" /><img src="../../docs/sponsors/opal.svg" alt="Opal" height="48" align="middle" /></picture></a>
+    <a href="https://github.com/velixio/supermetry?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="48" align="middle" /></picture></a>
 </p>
 
-**여기에 귀사의 로고를 올려 보세요.** Development, Company, Strategic 후원 자리는 월 100달러부터 열려 있으며, Community 후원사(25달러)는 이름과 링크가 실립니다. 후원으로 얻는 것은 기능이 아니라 크레딧입니다.
+후원에 관심이 있으시면 [sponsor@voicestudio.sh](mailto:sponsor@voicestudio.sh)로 문의해 주세요.
 
 <a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="GitHub Sponsors로 후원하기" /></a>
 [Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [등급과 혜택](../../SPONSORS.md) · [로고 게재 신청](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
+
+## 다른 프로젝트
+
+VoiceStudio 개발자들이 만드는 다른 오픈 소스 도구도 살펴보세요.
+
+- **[OpenGTM](https://opengtm.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=related-projects)** — 셀프 호스팅 시장 개척 워크스페이스에서 기업과 담당자를 찾고 관련 정보를 보강하세요. [소스 코드](https://github.com/debpalash/OpenGTM).
+- **[Opal](https://opal.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=related-projects)** — 하나의 네이티브 오픈 소스 플레이어에서 미디어를 재생하고 스트리밍하고 탐색하세요. [소스 코드](https://github.com/debpalash/Opal).
+- **[Supermetry](https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=related-projects)** — 셀프 호스팅 쿠키 없는 분석으로 웹사이트와 제품의 사용 현황을 파악하세요. [소스 코드](https://github.com/velixio/supermetry).
+
+더 많은 프로젝트: [debpalash](https://github.com/debpalash?tab=repositories) · [velixio](https://github.com/velixio?tab=repositories)
 
 ## 팀
 
@@ -175,3 +221,7 @@ VoiceStudio는 무료이며, 뒤에 유료 클라우드도 없습니다. 후원�
 ## 라이선스와 책임 있는 사용
 
 앱에는 [AGPL-3.0](../../LICENSE)이 적용되며, 그 조건에 따른 상업적 사용도 가능합니다. 모델 가중치, 음성, 생성 결과물에는 각각의 라이선스가 있으며, 모델 관리자에서 모델별로 확인할 수 있습니다([목록](../../docs/licensing/model-inventory.md)). 목소리는 반드시 그 주인의 허락을 받은 경우에만 복제하세요. 자세한 내용: [LICENSE-NOTICE.md](../../LICENSE-NOTICE.md).
+
+## 커뮤니티 튜토리얼
+
+- [VoiceStudio 사용 안내 — Nafay 3D (YouTube)](https://www.youtube.com/watch?v=I-u-A-oisIU)

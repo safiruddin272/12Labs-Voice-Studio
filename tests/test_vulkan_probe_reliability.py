@@ -45,6 +45,39 @@ def test_failed_probe_output_is_not_verified(monkeypatch):
     assert auto._run_vulkaninfo() is None
 
 
+def test_failed_native_probes_keep_inventory_sizing_without_gpu_promotion(monkeypatch):
+    auto = module()
+    compute = importlib.import_module("engines.omnivoice_gguf.compute")
+    inventory = importlib.import_module("core.gpu_inventory")
+    caps = importlib.import_module("core.device_caps")
+    for name in ("OMNIVOICE_GGUF_BACKEND", "OMNIVOICE_GGUF_DEVICE", "GGML_BACKEND"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("OMNIVOICE_DEVICE", "auto")
+    monkeypatch.setattr(shutil, "which", lambda _: "vulkaninfo")
+    monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs:
+                        SimpleNamespace(stdout=SUMMARY, returncode=1))
+    monkeypatch.setattr(auto, "has_vulkan_loader", lambda: True)
+    monkeypatch.setattr(auto, "system_ram_gb", lambda: 64)
+    monkeypatch.setattr(inventory, "detect_host_gpus", lambda: (
+        SimpleNamespace(vendor="amd", name="AMD Radeon RX 6700 XT", vram_gb=12, discrete=True),))
+    monkeypatch.setattr(compute, "binary_has_vulkan_module", lambda: True)
+    monkeypatch.setattr(compute, "_binary_identity", lambda: ())
+    monkeypatch.setattr(caps, "detect_host_caps", lambda: SimpleNamespace(family="cpu"))
+    auto.detect_vulkan_profile.cache_clear()
+    compute._promotion_for.cache_clear()
+    try:
+        assert auto.detect_vulkan_profile().source == "os"
+        assert compute.automatic_compute_class() == "mid-vram"
+        cls = SimpleNamespace(gpu_compat=("vulkan", "cpu"), min_vram_gb=0)
+        runtime = compute.runtime_profile(cls, None)
+        assert runtime["effective_device"] == "cpu"
+        assert runtime["runtime_device_verified"] is False
+        assert compute.vulkan_eligible() is False
+    finally:
+        auto.detect_vulkan_profile.cache_clear()
+        compute._promotion_for.cache_clear()
+
+
 @pytest.mark.parametrize("vendor,name,memory,expected", [
     ("amd", "AMD Radeon RX 6700 XT", 12, 12),
     ("intel", "AMD Radeon RX 6700 XT", 16, 0),

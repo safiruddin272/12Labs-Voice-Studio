@@ -1,5 +1,7 @@
 # Electron dubbing workspace
 
+![Bundled original and dubbed samples in the default dark theme.](media/electron/dubbing.png)
+
 > **Historical context:** this page was written while the Electron and Tauri apps
 > coexisted. Mentions of Tauri helpers, pages, tests and regression results describe
 > that migration period; the Tauri shell has since been removed and the shared code

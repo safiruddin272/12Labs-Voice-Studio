@@ -1659,12 +1659,3 @@ Windows or another program refused access to the port, often a reserved range
 (Hyper-V, WSL, Docker). Check with
 `netsh interface ipv4 show excludedportrange protocol=tcp`, then set
 `OMNIVOICE_PORT` to a different free port.
-
-### Moving the data folder reports "identity_unavailable"
-
-VoiceStudio checks that the selected destination is still the same directory
-before copying data. On filesystems with coarse timestamps, it briefly retries
-the identity probe until the directory's change time advances. If creation time
-changes too, or the identity remains unverifiable, the move is refused before
-copying and the source stays in place. Try a local filesystem with stable file
-identities if this error persists.

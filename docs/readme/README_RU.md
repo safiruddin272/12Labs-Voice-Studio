@@ -1,78 +1,112 @@
 <div align="center">
-  <img src="../../docs/logo.png" alt="VoiceStudio" width="88" />
-  <h1>VoiceStudio</h1>
+  <h1><sub><img src="../../docs/logo.png" alt="" width="36" height="36" /></sub> VoiceStudio</h1>
   <p>
     <a href="https://trendshift.io/repositories/28176?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-28176" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/28176" alt="Значок рейтинга популярности VoiceStudio на Trendshift" width="220" height="48" /></a>
   </p>
-  <p><strong>Локальная голосовая студия: клонирование и создание голосов, дубляж, диктовка, расшифровка и озвучка на 646 языках.</strong><br />
-  Работает на вашем компьютере и телефоне. Без аккаунтов и API-ключей; без вашего согласия ничего не покидает устройство.</p>
+  <h2>Голосовая студия с ИИ. На вашем устройстве.</h2>
+  <h3>Клонирование и дизайн голоса, дубляж, диктовка, расшифровка и озвучка на 646 языках.</h3>
+  <p>Работает на ноутбуках, настольных компьютерах, серверах, телефонах, планшетах и других устройствах</p>
   <p>
     <a href="https://voicestudio.sh/?utm_source=github&utm_medium=readme&utm_campaign=project">Сайт</a> ·
     <a href="https://github.com/debpalash/VoiceStudio/releases/latest">Скачать</a> ·
     <a href="#быстрый-старт">Начало работы</a> ·
     <a href="#справка">Документация</a> ·
     <a href="https://discord.gg/bzQavDfVV9">Discord</a> ·
-    <a href="../../README.md">English</a> ·
-    <a href="README_CN.md">简体中文</a> ·
-    <a href="README_JA.md">日本語</a> ·
-    <a href="README_KO.md">한국어</a>
+    <a href="../../README.md">English</a> · <a href="README_CN.md">简体中文</a> · <a href="README_JA.md">日本語</a> · <a href="README_KO.md">한국어</a>
   </p>
   <p>
-    <a href="https://github.com/debpalash/VoiceStudio/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/debpalash/VoiceStudio/ci.yml?branch=main" alt="Статус CI" /></a>
-    <a href="https://github.com/debpalash/VoiceStudio/releases/latest"><img src="https://img.shields.io/github/v/release/debpalash/VoiceStudio" alt="Последний релиз" /></a>
-    <a href="../../LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue" alt="Лицензия AGPL-3.0" /></a>
-    <a href="https://supermetry.com"><img src="https://app.supermetry.com/px/zfjiv7psp4ed.svg?c=VoiceStudio&style=stats" alt="Число просмотров" /></a>
+    <a href="https://github.com/debpalash/VoiceStudio/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/debpalash/VoiceStudio/ci.yml?branch=main&amp;style=flat-square&amp;label=build&amp;labelColor=27272a" alt="Статус CI" /></a>
+    <a href="https://github.com/debpalash/VoiceStudio/releases/latest"><img src="https://img.shields.io/github/v/release/debpalash/VoiceStudio?style=flat-square&amp;labelColor=27272a&amp;color=52525b" alt="Последний релиз" /></a>
+    <a href="../../LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-52525b?style=flat-square&amp;labelColor=27272a" alt="Лицензия AGPL-3.0" /></a>
+    <a href="https://supermetry.com"><img src="https://app.supermetry.com/px/zfjiv7psp4ed.svg?c=VoiceStudio" alt="Число просмотров" /></a>
   </p>
   <p>
-    <sub>Стратегический спонсор</sub><br />
-    <a href="https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="48" /></picture></a>
+    <sub>Стратегические спонсоры</sub><br />
+    <a href="https://github.com/debpalash/OpenGTM?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opengtm-dark.svg" /><img src="../../docs/sponsors/opengtm.svg" alt="OpenGTM" height="32" align="middle" /></picture></a>
+    <a href="https://github.com/debpalash/Opal?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opal-dark.svg" /><img src="../../docs/sponsors/opal.svg" alt="Opal" height="32" align="middle" /></picture></a>
+    <a href="https://github.com/velixio/supermetry?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="32" align="middle" /></picture></a>
   </p>
   <p>
-    <a href="https://snapcraft.io/voicestudio"><img src="https://snapcraft.io/en/dark/install.svg" alt="Get it from the Snap Store" height="40" /></a>
+    <sub>Специальный спонсор</sub><br />
+    <a href="https://app.spicrawl.com/signup?utm_source=voicestudio&amp;utm_medium=github_readme&amp;utm_campaign=special_sponsor&amp;utm_content=logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/spicrawl-dark.svg" /><img src="../../docs/sponsors/spicrawl.svg" alt="Spicrawl" height="32" align="middle" /></picture></a>
   </p>
 </div>
 
-![Обзор приложения: клонирование голоса, создание голоса, дубляж и управление моделями](../../docs/media/electron/voicestudio.gif)
+<p align="center">
+  <a href="../../docs/media/electron/voicestudio.mp4">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce) and (max-width: 768px)" srcset="../../docs/media/electron/voice-cloning.webp" />
+      <source media="(prefers-reduced-motion: reduce)" srcset="../../docs/media/electron/voice-cloning.png" />
+      <img src="../../docs/media/electron/voicestudio.gif" alt="Обзор приложения: клонирование голоса, создание голоса, дубляж и управление моделями" width="100%" />
+    </picture>
+  </a><br />
+  <sub>Демонстрационное пространство · Стандартная тёмная тема · <a href="../../docs/media/electron/voicestudio.mp4">Смотреть HD-обзор</a></sub>
+</p>
+
+<p align="center">
+  <a href="https://github.com/debpalash/VoiceStudio/releases/latest"><img src="https://img.shields.io/badge/%D0%A1%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-993f61?style=for-the-badge&amp;logo=github&amp;logoColor=ffffff" alt="Скачать" height="24" /></a>
+  <a href="#быстрый-старт"><img src="https://img.shields.io/badge/%D0%9D%D0%B0%D1%87%D0%B0%D0%BB%D0%BE%20%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B-27272a?style=for-the-badge" alt="Начало работы" height="24" /></a>
+</p>
 
 ## Возможности
 
-| Творите | Публикуйте | Интегрируйте |
-| :--- | :--- | :--- |
-| Копия любого голоса или голос по описанию | Перевод и озвучка роликов с точной синхронизацией | API и MCP-сервер для ИИ-агентов прямо на вашей машине |
-| Голосовой ввод из компактного окна поверх приложений | Рассказы, аудиокниги и обработка файлов пачками | Сохранённые сценарии и автообработка новых файлов в папке |
-
-Из коробки работает **VoiceStudio** — штатный движок, построенный на k2-fsa/OmniVoice; ещё несколько десятков альтернатив ставятся из менеджера моделей. Полный список — в [каталоге функций и движков](../../docs/feature-catalog.md).
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/voice-cloning.png"><img src="../../docs/media/electron/voice-cloning.webp" alt="Рабочее пространство клонирования голоса со встроенным демонстрационным голосом" width="100%" /></a><br />
+      <strong><a href="../../docs/audio-quality.md">Клонирование голоса</a></strong><br />
+      Создавайте речь знакомым голосом по чистой эталонной записи.
+    </td>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/dubbing.png"><img src="../../docs/media/electron/dubbing.webp" alt="Экран дубляжа в приложении Electron" width="100%" /></a><br />
+      <strong><a href="../../docs/electron-dubbing.md">Дубляж</a></strong><br />
+      Переводите и озвучивайте видео с сохранением исходного тайминга.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/voice-design.png"><img src="../../docs/media/electron/voice-design.webp" alt="Голос задаётся текстовым описанием на экране голосового дизайна" width="100%" /></a><br />
+      <strong><a href="../../docs/electron-voice-design.md">Голосовой дизайн</a></strong><br />
+      Опишите нужный голос словами и создайте его.
+    </td>
+    <td width="50%" valign="top">
+      <a href="../../docs/media/electron/models.png"><img src="../../docs/media/electron/models.webp" alt="Скачивание, обновление и удаление речевых моделей на компьютере" width="100%" /></a><br />
+      <strong><a href="../../docs/downloading-models.md">Модели</a></strong><br />
+      Выбирайте движки и скачивайте только нужные модели.
+    </td>
+  </tr>
+</table>
 
 <details>
-<summary><strong>Скриншоты</strong></summary>
+<summary><strong>Другие скриншоты</strong></summary>
 
 <table>
   <tr>
-    <td><img src="../../docs/media/electron/voice-cloning.png" alt="Рабочее пространство клонирования голоса со встроенным демонстрационным голосом" width="100%" /></td>
-    <td><img src="../../docs/media/electron/dubbing.png" alt="Экран дубляжа в приложении Electron" width="100%" /></td>
+    <td width="50%"><a href="../../docs/media/electron/overview.png"><img src="../../docs/media/electron/overview.webp" alt="Обзор рабочего пространства" width="100%" /></a><br /><strong>Обзор рабочего пространства</strong></td>
+    <td width="50%"><a href="../../docs/media/electron/model-packs.png"><img src="../../docs/media/electron/model-packs.webp" alt="Наборы моделей" width="100%" /></a><br /><strong>Наборы моделей</strong></td>
   </tr>
-  <tr><td align="center">Клонирование голоса</td><td align="center">Дубляж</td></tr>
-  <tr>
-    <td><img src="../../docs/media/electron/voice-design.png" alt="Голос задаётся текстовым описанием на экране голосового дизайна" width="100%" /></td>
-    <td><img src="../../docs/media/electron/models.png" alt="Скачивание, обновление и удаление речевых моделей на компьютере" width="100%" /></td>
-  </tr>
-  <tr><td align="center">Голосовой дизайн</td><td align="center">Модели</td></tr>
 </table>
 
 </details>
 
+- **Диктовка и расшифровка** — Компактное окно диктовки и локальная расшифровка
+- **Озвучка и пакетная обработка** — Рассказы, аудиокниги и очередь заданий
+- **Интеграция и автоматизация** — Локальный API, MCP, сохранённые сценарии и отслеживание папок
+
+Из коробки работает **VoiceStudio** — штатный движок, построенный на k2-fsa/OmniVoice; ещё несколько десятков альтернатив ставятся из менеджера моделей. Полный список — в [каталоге функций и движков](../../docs/feature-catalog.md).
+
 ## Платформы
 
-| Платформа | Файл | Аппаратное ускорение | Статус |
-| :--- | :--- | :--- | :--- |
-| **macOS** (Apple Silicon) | `.dmg` · [руководство](../../docs/install/macos.md) | Metal (MPS) | Стабильная |
-| **Windows 10/11** (x64) | `.exe` · [руководство](../../docs/install/windows.md) | NVIDIA CUDA · [AMD ROCm (по желанию)](../../docs/install/windows-rocm.md) · CPU | Стабильная |
-| **Linux** (x64) | `.AppImage` · `.deb` · [`snap`](https://snapcraft.io/voicestudio) · [Nix](../../docs/install/nix.md) · [руководство](../../docs/install/linux.md) | NVIDIA CUDA · CPU | Стабильная |
-| **Docker** | [`ghcr.io/debpalash/voicestudio`](../../docs/install/docker.md) | NVIDIA CUDA · AMD ROCm | Стабильная |
-| **Android** 10+ | `.apk` · [руководство](../../docs/mobile.md#install) | На устройстве, офлайн | Предварительная |
-| **iPhone / iPad** (iOS 17+) | `.ipa` (sideload) · [руководство](../../docs/mobile.md#install) | На устройстве, офлайн | Предварительная |
-| **Windows ARM64** | `.exe` · [руководство](../../docs/install/windows.md) | CPU (x64-бэкенд работает через эмуляцию) | Экспериментальная |
-| **Intel Mac** | `.dmg` · [причины](../../docs/install/macos.md) | Только интерфейс, подключение к удалённому бэкенду | Ограниченная |
+| Платформа и статус | Загрузка и ускорение |
+| :--- | :--- |
+| <img src="../../docs/assets/platforms/apple.svg" alt="" width="20" height="20" />&nbsp;**macOS** (Apple Silicon)<br /><sub>Стабильная</sub> | `.dmg` · [руководство](../../docs/install/macos.md)<br /><sub>Metal (MPS)</sub> |
+| <img src="../../docs/assets/platforms/windows.svg" alt="" width="20" height="20" />&nbsp;**Windows 10/11** (x64)<br /><sub>Стабильная</sub> | `.exe` · [руководство](../../docs/install/windows.md)<br /><sub>NVIDIA CUDA · [AMD ROCm (по желанию)](../../docs/install/windows-rocm.md) · CPU</sub> |
+| <img src="../../docs/assets/platforms/linux.svg" alt="" width="20" height="20" />&nbsp;**Linux** (x64)<br /><sub>Стабильная</sub> | `.AppImage` · `.deb` · <a href="https://snapcraft.io/voicestudio"><img src="https://img.shields.io/badge/Snap%20Store-27272a?style=flat-square&amp;logo=snapcraft&amp;logoColor=ffffff" alt="Snap Store" height="20" /></a> · [Nix](../../docs/install/nix.md) · [руководство](../../docs/install/linux.md)<br /><sub>NVIDIA CUDA · CPU</sub> |
+| <img src="../../docs/assets/platforms/docker.svg" alt="" width="20" height="20" />&nbsp;**Docker**<br /><sub>Стабильная</sub> | [GHCR](../../docs/install/docker.md "ghcr.io/debpalash/voicestudio")<br /><sub>NVIDIA CUDA · AMD ROCm</sub> |
+| <img src="../../docs/assets/platforms/android.svg" alt="" width="20" height="20" />&nbsp;**Android** 10+<br /><sub>Предварительная</sub> | `.apk` · [руководство](../../docs/mobile.md#install)<br /><sub>На устройстве, офлайн</sub> |
+| <img src="../../docs/assets/platforms/apple.svg" alt="" width="20" height="20" />&nbsp;**iPhone / iPad** (iOS 17+)<br /><sub>Предварительная</sub> | `.ipa` (sideload) · [руководство](../../docs/mobile.md#install)<br /><sub>На устройстве, офлайн</sub> |
+| <img src="../../docs/assets/platforms/windows.svg" alt="" width="20" height="20" />&nbsp;**Windows ARM64**<br /><sub>Экспериментальная</sub> | `.exe` · [руководство](../../docs/install/windows.md)<br /><sub>CPU (x64-бэкенд работает через эмуляцию)</sub> |
+| <img src="../../docs/assets/platforms/apple.svg" alt="" width="20" height="20" />&nbsp;**Intel Mac**<br /><sub>Ограниченная</sub> | `.dmg` · [причины](../../docs/install/macos.md)<br /><sub>Только интерфейс, подключение к удалённому бэкенду</sub> |
 
 Установщики для компьютера и телефона лежат в [последнем релизе](https://github.com/debpalash/VoiceStudio/releases/latest), а образы Docker публикуются в GHCR. Нет видеокарты? Приложение полностью работает на процессоре, просто медленнее. Необязательные нативные GGUF-движки могут использовать Vulkan, в том числе на видеокартах AMD ([OmniVoice](../../docs/engines/omnivoice-gguf.md#vulkan-acceleration), [CosyVoice](../../docs/engines/cosyvoice-gguf.md)). Сколько занимает генерация на разных движках и железе, показано в [обзоре быстродействия](../../docs/performance.md).
 
@@ -147,13 +181,25 @@ https://github.com/debpalash/VoiceStudio/blob/main/docs/install/agent.md
 VoiceStudio бесплатен, и за ним нет платного облака. Новые версии выходят благодаря спонсорам: они оплачивают время мейнтейнера, оборудование для тестов, подпись кода и инфраструктуру релизов.
 
 <p>
-    <a href="https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="48" /></picture></a>
+    <a href="https://github.com/debpalash/OpenGTM?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opengtm-dark.svg" /><img src="../../docs/sponsors/opengtm.svg" alt="OpenGTM" height="48" align="middle" /></picture></a>
+    <a href="https://github.com/debpalash/Opal?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/opal-dark.svg" /><img src="../../docs/sponsors/opal.svg" alt="Opal" height="48" align="middle" /></picture></a>
+    <a href="https://github.com/velixio/supermetry?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=readme-logo"><picture><source media="(prefers-color-scheme: dark)" srcset="../../docs/sponsors/supermetry-dark.svg" /><img src="../../docs/sponsors/supermetry.svg" alt="Supermetry" height="48" align="middle" /></picture></a>
 </p>
 
-**Здесь может быть ваш логотип.** Места спонсоров уровней Development, Company и Strategic открыты — от 100 $ в месяц; спонсоры уровня Community (25 $) получают именную ссылку. Спонсорство даёт признание, а не функции.
+По вопросам спонсорства пишите на [sponsor@voicestudio.sh](mailto:sponsor@voicestudio.sh).
 
 <a href="https://github.com/sponsors/debpalash"><img src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=githubsponsors&logoColor=white" alt="Поддержать через GitHub Sponsors" /></a>
 [Ko-fi](https://ko-fi.com/debpalash) · [PayPal](https://paypal.me/palashCoder) · [Уровни и привилегии](../../SPONSORS.md) · [Разместить логотип](https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml)
+
+## Другие проекты
+
+Другие инструменты с открытым исходным кодом от создателей VoiceStudio.
+
+- **[OpenGTM](https://opengtm.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=related-projects)** — Находите компании и контакты и дополняйте их данные в рабочем пространстве для выхода на рынок на своём сервере. [Исходный код](https://github.com/debpalash/OpenGTM).
+- **[Opal](https://opal.palash.dev/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=related-projects)** — Смотрите, транслируйте и просматривайте медиа в одном нативном плеере с открытым исходным кодом. [Исходный код](https://github.com/debpalash/Opal).
+- **[Supermetry](https://supermetry.com/?utm_source=voicestudio&utm_medium=sponsor&utm_campaign=strategic-sponsor&utm_content=related-projects)** — Изучайте использование сайтов и продуктов с аналитикой без cookie на собственном сервере. [Исходный код](https://github.com/velixio/supermetry).
+
+Другие проекты: [debpalash](https://github.com/debpalash?tab=repositories) · [velixio](https://github.com/velixio?tab=repositories)
 
 ## Команда проекта
 
@@ -175,3 +221,7 @@ VoiceStudio бесплатен, и за ним нет платного обла�
 ## Лицензия и этичное использование
 
 На приложение распространяется лицензия [AGPL-3.0](../../LICENSE), в том числе на коммерческое использование на её условиях. У весов моделей, голосов и сгенерированного результата свои лицензии; менеджер моделей показывает их для каждой модели ([полный перечень](../../docs/licensing/model-inventory.md)). Клонируйте голос только с разрешения его владельца. Подробности: [LICENSE-NOTICE.md](../../LICENSE-NOTICE.md).
+
+## Уроки сообщества
+
+- [Видеоурок по VoiceStudio — Nafay 3D (YouTube)](https://www.youtube.com/watch?v=I-u-A-oisIU)

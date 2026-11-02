@@ -1,5 +1,7 @@
 # VoiceStudio — Electron desktop app
 
+![VoiceStudio in its default dark theme, using the demo workspace.](../docs/media/electron/overview.png)
+
 Electron is the only maintained desktop app for voice cloning, stories, dubbing,
 transcription, voice design, and workflows. Tauri is archived at v0.5.3. For
 existing installations, see [migration notes](../docs/electron-migration.md).

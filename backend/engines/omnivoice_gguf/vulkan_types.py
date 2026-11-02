@@ -37,7 +37,12 @@ class VulkanAdapter:
 
 @dataclass(frozen=True)
 class VulkanProfile:
-    """What the probe found. ``verified`` means a working Vulkan driver."""
+    """Adapters available for sizing, with their evidence source.
+
+    ``verified`` permits advisory selection, including loader-backed OS
+    inventory. Only ``source == "vulkaninfo"`` proves native enumeration;
+    compute routing requires that proof for GPU offers and timeout budgets.
+    """
 
     verified: bool
     source: Literal["vulkaninfo", "os", "none"]
