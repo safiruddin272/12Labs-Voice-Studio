@@ -2121,8 +2121,9 @@ def _resolve_health_device() -> None:
         device = _probe_health_device(engine)
     except Exception:  # noqa: BLE001 - a liveness label must never fail a probe
         device = "unknown"
-    _health_label = (device, engine)
-    _health_device_at = time.monotonic()
+    with _health_device_lock:
+        _health_label = (device, engine)
+        _health_device_at = time.monotonic()
 
 
 def _cached_health_label() -> tuple[str, str | None]:
@@ -2143,6 +2144,8 @@ def _cached_health_label() -> tuple[str, str | None]:
     if label is not None and not stale:
         return label
     with _health_device_lock:
+        label = _health_label
+        stale = label is not None and time.monotonic() - _health_device_at >= _HEALTH_DEVICE_TTL_S
         idle = _health_device_thread is None or not _health_device_thread.is_alive()
         first = label is None and _health_device_thread is None
         if first or (stale and idle):
