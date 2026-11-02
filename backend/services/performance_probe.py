@@ -99,6 +99,12 @@ def _query(family, engine):
             return None
 
 
+def isolated_asr_import_ready():
+    """Prove the CT2 import in a child without re-entering backend availability."""
+    result = _query("asr-import", "faster-whisper")
+    return bool(result and result["ready"] and result["engine"] == "faster-whisper")
+
+
 def selection_ready(family, engine):
     """Check newly managed selections without importing their runtimes here."""
     if family not in _MANAGED:

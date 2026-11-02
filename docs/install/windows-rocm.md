@@ -163,6 +163,10 @@ Before saving changed engine selections, presets validate runtime readiness in
 a bounded offline child process. Failed checks preserve the existing selection;
 automatic ASR selection uses the same isolated validation and retains fallback.
 These model-free checks do not replace normal model load-time validation.
+ROCm 10 capture selection also verifies faster-whisper's native import in an
+offline child before choosing it, including CPU mode. A package whose DLLs
+cannot load therefore leaves PyTorch Whisper available as the capture fallback;
+CPU checks do not run GPU verification or load CT2 into the API process.
 
 IndexTTS keeps its Python 3.10/3.11 requirement; CosyVoice keeps Torch 2.7;
 VoxCPM2 keeps Torch 2.11. Neither cp312 main-environment recipe is applied to these

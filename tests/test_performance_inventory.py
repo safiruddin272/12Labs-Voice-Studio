@@ -28,6 +28,7 @@ def local_inventory(monkeypatch):
     from services import tts_backend, engine_routing, sherpa_dictation, translation_engines, diarization_runtime
     readiness = importlib.import_module("services.performance_readiness")
     monkeypatch.setattr(readiness, "package_available", lambda name: True)
+    monkeypatch.setattr(inventory, "package_available", readiness.package_available)
 
     for key in ("OMNIVOICE_TTS_BACKEND", "OMNIVOICE_MODEL", "OMNIVOICE_KITTENTTS_MODEL",
                 "OMNIVOICE_ASR_BACKEND", "OMNIVOICE_SHERPA_ASR_MODEL", "OMNIVOICE_DIARIZATION_BACKEND"):

@@ -26,6 +26,10 @@ def availability_status():
         return None
     if not util.find_spec("faster_whisper"):
         return False, "faster-whisper is not installed"
+    from services.performance_probe import isolated_asr_import_ready
+
+    if not isolated_asr_import_ready():
+        return False, "faster-whisper native import could not be verified in its isolated process"
     from core.device_caps import requested_device_override
     from .ct2 import availability_status as hip_status
 

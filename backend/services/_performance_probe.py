@@ -25,6 +25,11 @@ def check(family, engine, broken=()):
     from core.windows_rocm.runtime import initialize_dll_search
 
     initialize_dll_search()
+    if family == "asr-import":
+        if engine != "faster-whisper":
+            return engine, False
+        module = importlib.import_module("faster_whisper")
+        return engine, callable(getattr(module, "WhisperModel", None))
     if family == "asr":
         from services import asr_backend as asr
 
