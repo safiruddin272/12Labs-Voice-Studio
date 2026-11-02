@@ -34,6 +34,7 @@ def activation(monkeypatch):
 
 
 def test_unusable_ct2_cannot_replace_working_auto_pytorch_fallback(activation):
+    """Preserve a working PyTorch fallback when the tier candidate cannot load CT2."""
     profiles, asr, _prefs, values, models = activation
     assert asr.active_backend_id() == "pytorch-whisper"
     assert profiles.activate_performance_tier("balanced", "asr") == {}
@@ -52,6 +53,7 @@ def test_validated_ready_asr_selection_applies(activation, monkeypatch):
 
 
 def test_unready_global_choices_never_write_any_managed_engine(activation, monkeypatch):
+    """Reject every unready global candidate before changing managed preferences."""
     profiles, _asr, prefs, values, models = activation
     choices = {"tts": ("omnivoice", "k2-fsa/OmniVoice"),
                "asr": ("faster-whisper", "Systran/faster-whisper-medium"),
@@ -81,10 +83,12 @@ def test_explicit_user_engine_pin_is_preserved_without_child_checks(activation, 
     ("ASR_MODEL_FASTER", True),
 ])
 def test_direct_asr_keeps_choice_changed_during_readiness(activation, monkeypatch, key, environment):
+    """Preserve ASR preferences or overrides changed during the readiness probe."""
     profiles, _asr, _prefs, values, models = activation
     monkeypatch.setattr(profiles, "active_asr_selection", lambda: "whisperx")
 
     def ready(*args):
+        """Simulate a user changing the selected preference or environment override."""
         if environment:
             monkeypatch.setenv(key, "new-user-choice")
         else:
@@ -97,6 +101,7 @@ def test_direct_asr_keeps_choice_changed_during_readiness(activation, monkeypatc
 
 
 def test_direct_asr_snapshot_precedes_slow_active_resolution(activation, monkeypatch):
+    """Capture ASR choices before slow backend resolution can race a user change."""
     profiles, _asr, _prefs, values, models = activation
 
     def resolve():
@@ -114,6 +119,7 @@ def test_direct_asr_snapshot_precedes_slow_active_resolution(activation, monkeyp
     ("dictation", "dictation.model_id"), ("translation", "translation_backend"),
 ])
 def test_global_plan_keeps_manual_choice_made_during_probe(activation, monkeypatch, family, key):
+    """Preserve manual family selections changed while probing a global plan."""
     profiles, _asr, prefs, values, models = activation
     monkeypatch.setattr(profiles, "profile_state", lambda tier: {
         "effective": {family: "balanced"}, "plan": {"families": {
@@ -131,6 +137,7 @@ def test_global_plan_keeps_manual_choice_made_during_probe(activation, monkeypat
 
 
 def test_global_snapshot_precedes_profile_state_and_preserves_new_tier(activation, monkeypatch):
+    """Preserve engine and tier changes made while computing the global plan."""
     profiles, _asr, prefs, values, models = activation
     mappings = []
 
@@ -148,6 +155,7 @@ def test_global_snapshot_precedes_profile_state_and_preserves_new_tier(activatio
 
 
 def test_readiness_wait_releases_preferences_lock_but_application_holds_it(activation, monkeypatch):
+    """Allow writes during readiness checks and serialize actual preference changes."""
     import threading
 
     profiles, asr, prefs, _values, _models = activation
@@ -155,7 +163,9 @@ def test_readiness_wait_releases_preferences_lock_but_application_holds_it(activ
     monkeypatch.setattr(profiles, "active_asr_selection", lambda: "whisperx")
 
     def ready(*args):
+        """Probe whether another thread can acquire the preference lock during readiness."""
         def writer():
+            """Record lock availability and release it immediately when acquired."""
             acquired = prefs._MUTATE_LOCK.acquire(timeout=1)
             observations.append(acquired)
             if acquired:

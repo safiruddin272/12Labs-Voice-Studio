@@ -16,6 +16,7 @@ def application_modules():
 
 
 def test_recipe_has_rdna2_native_variant():
+    """Select only the native gfx1031 runtime packages for that RDNA 2 variant."""
     selected = recipe.load_recipe(architecture="gfx1031")
     assert selected["gpu_architectures"] == ["gfx1031"]
     assert selected["torch"]["hip_prefix"] == "7.15."
@@ -24,6 +25,7 @@ def test_recipe_has_rdna2_native_variant():
 
 
 def test_rdna2_urls_are_allowlisted_and_hashed():
+    """Require allowlisted AMD artifact URLs and valid SHA-256 pins for RDNA 2."""
     selected = recipe.load_recipe(architecture="gfx1031")
     for line in install.hashed_requirements(selected).splitlines():
         url, digest = line.split(" --hash=sha256:")
@@ -84,6 +86,7 @@ def test_mixed_amd_architectures_fail_closed(monkeypatch):
 
 @pytest.mark.parametrize("gfx", ["gfx1030", "gfx1031", "gfx1032"])
 def test_each_selected_artifact_is_pinned(gfx):
+    """Require complete artifact hashes and the matching architecture-specific packages."""
     selected = recipe.load_recipe(architecture=gfx)
     lines = install.hashed_requirements(selected).splitlines()
     assert len(lines) == 10
@@ -125,6 +128,7 @@ def test_windows_never_sets_hsa_override(monkeypatch):
 
 
 def test_rocm10_dll_search_excludes_stale_rocm7_libraries(monkeypatch, tmp_path):
+    """Exclude stale custom ROCm 7 libraries from the ROCm 10 DLL search path."""
     from core.windows_rocm import runtime
     for package in ("torch", "ctranslate2", "_rocm_sdk_core", "_rocm_sdk_libraries", "_rocm_sdk_libraries_custom"):
         (tmp_path / package / ("lib" if package == "torch" else "" if package == "ctranslate2" else "bin")).mkdir(parents=True)
@@ -147,6 +151,7 @@ def test_rdna2_refuses_an_hsa_override_before_imports(monkeypatch):
 
 
 def test_missing_rocm10_kernel_metadata_fails_closed(monkeypatch):
+    """Reject GPU capability when installed ROCm kernel metadata cannot be read."""
     monkeypatch.setattr(device_caps.sys, "platform", "win32")
     fake = types.SimpleNamespace(__version__="2.13.0+rocm10.0.0",
         version=types.SimpleNamespace(hip="7.15"),

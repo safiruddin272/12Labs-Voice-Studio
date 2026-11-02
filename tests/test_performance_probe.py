@@ -24,6 +24,7 @@ def fake_child(monkeypatch, probe, *, payload=None, code=0, timeout=False):
         killed = False
 
         def wait(self, timeout=None):
+            """Simulate child exit or a timeout until the fake child is killed."""
             observed["wait_timeout"] = timeout
             if observed.get("timeout") and not self.killed:
                 raise subprocess.TimeoutExpired("probe", timeout)
@@ -35,6 +36,7 @@ def fake_child(monkeypatch, probe, *, payload=None, code=0, timeout=False):
     child = Child()
 
     def spawn(argv, **kwargs):
+        """Record child launch options and optionally write its readiness result."""
         observed.update(argv=argv, kwargs=kwargs, timeout=timeout)
         if payload is not None:
             Path(argv[-1]).write_text(payload, encoding="utf-8")
@@ -64,10 +66,12 @@ def test_invalid_or_failed_worker_cannot_authorize_selection(monkeypatch, probe,
 
 
 def test_ready_worker_is_offline_bounded_and_does_not_import_parent_runtime(monkeypatch, probe):
+    """Keep readiness imports in an offline child with a bounded wait."""
     _, observed = fake_child(monkeypatch, probe, payload=result())
     original = builtins.__import__
 
     def guarded(name, *args, **kwargs):
+        """Reject heavy runtime imports in the parent while delegating other imports."""
         if name.split(".")[0] in {"transformers", "faster_whisper", "ctranslate2", "omnivoice"}:
             pytest.fail("Runtime imported in parent")
         return original(name, *args, **kwargs)
@@ -110,6 +114,7 @@ def test_success_cache_expires_and_failed_probes_are_never_cached(monkeypatch, p
 
 @pytest.mark.parametrize("change", ["device", "package", "broken", "interpreter"])
 def test_positive_cache_matches_device_packages_and_parent_failures(monkeypatch, probe, tmp_path, change):
+    """Invalidate cached readiness when device, packages, failures, or Python change."""
     from types import SimpleNamespace
 
     version = ["1.0"]

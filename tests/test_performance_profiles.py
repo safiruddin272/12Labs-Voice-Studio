@@ -10,6 +10,7 @@ MLX_LARGE = {"repo_id": "mlx-community/whisper-large-v3-mlx", "size_gb": 3.0}
 
 @pytest.fixture(autouse=True)
 def no_metal_whisper(monkeypatch):
+    """Remove host-specific MLX choices and provide deterministic family readiness."""
     from services import asr_backend, translation_engines
 
     monkeypatch.setattr(profiles, "_installed_mlx_whisper_model", lambda: None)

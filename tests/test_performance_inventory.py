@@ -22,6 +22,7 @@ def current_modules(monkeypatch):
 
 @pytest.fixture
 def local_inventory(monkeypatch):
+    """Provide a deterministic installed-model inventory with no environment overrides."""
     from api.routers.setup import models
     from core import prefs
     from services import tts_backend, engine_routing, sherpa_dictation, translation_engines, diarization_runtime

@@ -771,6 +771,7 @@ class WhisperXBackend(ASRBackend):
 
     @classmethod
     def is_available(cls) -> tuple[bool, str]:
+        """Report WhisperX import and native-library readiness without raising."""
         from core.windows_rocm.pipelines import whisperx_error as pipeline_error, prepare_audio_imports
 
         if reason := pipeline_error():
@@ -800,6 +801,7 @@ class WhisperXBackend(ASRBackend):
         self._ensure_asr()
 
     def _ensure_asr(self):
+        """Lazily load WhisperX after compatibility checks and available-VRAM selection."""
         from core.windows_rocm.pipelines import PipelineCompatibilityError, whisperx_error as pipeline_error, prepare_audio_imports
 
         if reason := pipeline_error(self._device):
@@ -1173,6 +1175,7 @@ class FasterWhisperBackend(ASRBackend):
 
     @classmethod
     def is_available(cls) -> tuple[bool, str]:
+        """Report isolated or in-process faster-whisper readiness without raising."""
         from core.windows_rocm.asr_isolation import availability_status as isolated_status
 
         if (status := isolated_status()) is not None:
@@ -1199,6 +1202,7 @@ class FasterWhisperBackend(ASRBackend):
         return _ctranslate2_cudnn_ok()
 
     def _ensure_model(self):
+        """Lazily initialize isolated or local faster-whisper with device fallback."""
         from core.windows_rocm.asr_isolation import ensure_isolated
 
         if ensure_isolated(self):
@@ -1287,6 +1291,7 @@ class FasterWhisperBackend(ASRBackend):
                    language: str | None = None, initial_prompt: str | None = None,
                    temperature: float | None = None,
                    task: str = "transcribe") -> dict:
+        """Transcribe through the active worker or local model and normalize segments."""
         self._ensure_model()
         if getattr(self, "_rocm_asr_proxy", None) is not None:
             from core.windows_rocm.asr_isolation import transcribe_isolated
@@ -1353,6 +1358,7 @@ class FasterWhisperBackend(ASRBackend):
         # never assigns — so the actual model in self._model was never freed and
         # a warm faster-whisper stayed resident for the life of the process.
         # Clear the real handle so the model is released.
+        """Release the isolated worker or local model and reclaim cached GPU memory."""
         from core.windows_rocm.asr_isolation import unload_isolated
 
         if unload_isolated(self):
@@ -1623,6 +1629,7 @@ class PyTorchWhisperBackend(ASRBackend):
         self._ensure_pipe()
 
     def _ensure_pipe(self):
+        """Lazily create the standalone PyTorch Whisper pipeline on the chosen device."""
         if self._pipe is not None:
             return
         # Build a standalone transformers Whisper pipeline on demand. This runs
@@ -1759,6 +1766,7 @@ class PyTorchWhisperBackend(ASRBackend):
     def supports_translation(self) -> bool:
         # A reused TTS-model ASR head may differ from the env default: ask the
         # loaded pipeline first.
+        """Check the loaded or configured checkpoint for multilingual translation support."""
         from services.pytorch_whisper_options import english_only
 
         if english_only(self._pipe):
@@ -1768,6 +1776,7 @@ class PyTorchWhisperBackend(ASRBackend):
 
     def transcribe(self, audio_path: str, *, word_timestamps: bool = True,
                    language: str | None = None, task: str = "transcribe") -> dict:
+        """Decode audio and normalize PyTorch Whisper output with safe generation options."""
         import soundfile as sf
         self._ensure_pipe()
         # transformers' Whisper generate() takes language/task; a prompt needs

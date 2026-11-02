@@ -53,6 +53,10 @@ which preserves the unmodified bytes from OpenNMT maintainer `jordimas`'s
 The mirror is public and requires no GitHub account or token; it avoids depending
 on an expiring Actions artifact. This is an experimental dependency, not a new
 official OpenNMT or VoiceStudio application release.
+The additional AMD index and mirror are the proposed source-policy exception
+in [PR #3712](https://github.com/debpalash/VoiceStudio/pull/3712). Upstream
+maintainer acceptance is required before merging that exception; the local
+integration and hardware tests do not establish upstream approval.
 Every file has a SHA-256 in the recipe, and setup refuses a file whose
 bytes differ. Every other package keeps the version your environment already
 has, so the overlay never quietly upgrades dependencies.

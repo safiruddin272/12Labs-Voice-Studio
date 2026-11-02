@@ -7,6 +7,7 @@ import pytest
 
 @pytest.fixture
 def hip(monkeypatch):
+    """Provide pinned RDNA 2 Torch capabilities while forbidding CT2 capability probes."""
     ab = importlib.import_module("services.asr_backend")
     recipe = importlib.import_module("core.windows_rocm.recipe")
     caps = importlib.import_module("core.device_caps")
@@ -21,6 +22,7 @@ def hip(monkeypatch):
     monkeypatch.setattr(caps, "detect_host_caps", lambda: SimpleNamespace(
         family="rocm", probe_ok=True, notes=()))
     def version(name):
+        """Return pinned Torch package versions and reject any CT2 metadata query."""
         if name == "ctranslate2":
             pytest.fail("Pure Torch ASR capability checked CT2")
         if name not in pins:

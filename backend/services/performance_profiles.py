@@ -111,6 +111,7 @@ _CT2_EQUIVALENT_OF_MLX = {
 
 
 def _installed_mlx_whisper_model() -> dict | None:
+    """Return the supported, complete MLX Whisper cache available on this host."""
     from api.routers.setup.models import (
         KNOWN_MODELS,
         _model_supported,
@@ -162,6 +163,7 @@ def _preset_asr_models(active_engine: str | None) -> list[tuple[str, dict]]:
 
 
 def _faster_whisper_backend() -> str | None:
+    """Choose an installed in-process or isolated faster-whisper backend."""
     from services import asr_backend
 
     if asr_installed(asr_backend.FasterWhisperBackend, asr_backend._DEEP_IMPORT_BROKEN):
@@ -207,6 +209,7 @@ def _installed_dictation_models() -> list:
 
 
 def _activate_asr_model(tier: str) -> dict | None:
+    """Apply a ready ASR tier only while the captured user selection is unchanged."""
     from core import prefs
     from services import asr_backend
 
@@ -238,6 +241,7 @@ def _activate_asr_model(tier: str) -> dict | None:
 
 
 def _activate_dictation_model(tier: str) -> dict | None:
+    """Apply a ready dictation tier without overwriting concurrent user choices."""
     from core import prefs
     from services import asr_backend
 
@@ -264,6 +268,7 @@ def _activate_dictation_model(tier: str) -> dict | None:
 
 
 def _activate_translation_model(tier: str) -> dict | None:
+    """Select a ready local tier while preserving usable explicit providers."""
     from core import prefs
 
     snapshot = selection_snapshot("translation")
@@ -297,6 +302,7 @@ def _activate_translation_model(tier: str) -> dict | None:
 
 
 def _installed_selectable_families() -> set[str]:
+    """List model families with installed candidates eligible for tier selection."""
     from services import translation_engines
 
     families: set[str] = set()
@@ -328,6 +334,7 @@ def _activate_installed_models(tier: str, family: str | None) -> dict[str, dict]
 
 @inventory_only
 def profile_state(choice: str | None = None) -> dict:
+    """Describe active selections, effective tiers, installed choices, and resource plans."""
     from core import prefs
     from services import asr_backend, diarization_runtime
     from services.sherpa_dictation import get_spec as dictation_spec

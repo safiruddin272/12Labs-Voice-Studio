@@ -16,6 +16,7 @@ from .verify import validate_report
 
 
 def probe():
+    """Verify the pinned ROCm installation and execute its native GPU probes."""
     validate_target()
     recipe = load_recipe()
     if (any(arch in recipe["rdna2"]["devices"] for arch in recipe["gpu_architectures"])

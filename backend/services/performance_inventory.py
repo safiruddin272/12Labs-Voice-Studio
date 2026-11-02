@@ -8,6 +8,7 @@ from services.performance_readiness import package_available, tts_installed
 
 
 def profile_plan(choice: str, overrides: dict, selections: dict) -> dict:
+    """Plan installed model selections within hardware budgets and explicit overrides."""
     from core import prefs
 
     from services import (

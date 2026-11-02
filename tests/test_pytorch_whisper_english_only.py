@@ -9,6 +9,7 @@ import soundfile as sf
 
 @pytest.fixture
 def english(monkeypatch, tmp_path):
+    """Provide an English-only pipeline that rejects language and task options."""
     backend = importlib.import_module("services.asr_backend").PyTorchWhisperBackend
     path = tmp_path / "speech.wav"
     sf.write(path, np.zeros(1600, dtype=np.float32), 16000)
@@ -18,6 +19,7 @@ def english(monkeypatch, tmp_path):
         model = SimpleNamespace(generation_config=SimpleNamespace(is_multilingual=False),
                                 name_or_path="custom-checkpoint", dtype="torch.float32")
         def __call__(self, audio, **options):
+            """Record generation options and reject multilingual options for the fake model."""
             calls.append(options)
             supplied = options.get("generate_kwargs", {})
             if any(key in supplied for key in ("language", "task")):
@@ -82,11 +84,13 @@ def test_execution_evidence_tracks_actual_pipeline_and_model(english):
 
 
 def test_availability_checks_metadata_without_executing_transformers(monkeypatch):
+    """Check installation metadata without executing the Transformers runtime."""
     import builtins
     from importlib import util
     backend = importlib.import_module("services.asr_backend").PyTorchWhisperBackend
     original = builtins.__import__
     def no_transformers(name, *args, **kwargs):
+        """Reject Transformers runtime imports while allowing unrelated imports."""
         if name == "transformers" or name.startswith("transformers."):
             pytest.fail("Background availability executed the heavy Transformers import")
         return original(name, *args, **kwargs)
@@ -96,6 +100,7 @@ def test_availability_checks_metadata_without_executing_transformers(monkeypatch
 
 
 def test_availability_reports_missing_transformers(monkeypatch):
+    """Report a missing Transformers installation as unavailable."""
     from importlib import util
     backend = importlib.import_module("services.asr_backend").PyTorchWhisperBackend
     monkeypatch.setattr(util, "find_spec", lambda name: None)
@@ -104,10 +109,12 @@ def test_availability_reports_missing_transformers(monkeypatch):
 
 
 def test_deep_pipeline_import_failure_keeps_context_and_import_error_category(monkeypatch):
+    """Preserve transitive import errors without misdiagnosing an installed package."""
     import builtins
     backend = importlib.import_module("services.asr_backend").PyTorchWhisperBackend()
     original = builtins.__import__
     def broken(name, *args, **kwargs):
+        """Simulate a transitive Transformers import failure and delegate other imports."""
         if name == "transformers":
             raise ImportError("missing transitive audio helper", name="transformers")
         return original(name, *args, **kwargs)

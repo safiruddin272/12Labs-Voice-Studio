@@ -13,11 +13,13 @@ def test_stale_completion_keeps_current_worker_execution_evidence(monkeypatch):
     created = []
     class Proxy:
         def __init__(self, source, device):
+            """Assign distinct CPU and GPU evidence to successive fake workers."""
             self.execution_device = "cpu" if not created else "cuda"
             self.execution_precision = "int8" if not created else "float16"
             self.fallback_reason = self.fallback_stage = None
             created.append(self)
         def transcribe(self, audio_path, **options):
+            """Pause the original worker to expose evidence races with its replacement."""
             if self is created[0]:
                 entered.set()
                 assert release.wait(10)

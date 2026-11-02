@@ -13,6 +13,7 @@ import pytest
     ("gfx1031", ("73df",), {"rocm-sdk-core": "10.0.0", "rocm": "7.2.1"}),
 ])
 def test_unsafe_selection_stops_before_download_or_package_changes(monkeypatch, arch, inventory, versions):
+    """Reject unsafe GPU or runtime selections before downloads or package mutations."""
     installer = importlib.import_module("core.windows_rocm.install")
     recipe = importlib.import_module("core.windows_rocm.recipe")
     gpu = importlib.import_module("core.gpu_inventory")
@@ -27,6 +28,7 @@ def test_unsafe_selection_stops_before_download_or_package_changes(monkeypatch, 
         gpu.HostGPU(vendor="amd", name="Radeon", pci_device_id=pci) for pci in inventory))
 
     def version(name):
+        """Return simulated package versions or report the requested package as absent."""
         if name not in versions:
             raise metadata.PackageNotFoundError(name)
         return versions[name]

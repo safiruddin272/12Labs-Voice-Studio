@@ -14,6 +14,7 @@ def test_concurrent_first_use_creates_one_owned_proxy(monkeypatch):
     calls, created = [], []
 
     def probe():
+        """Block the first probe and signal subsequent probes to expose creation races."""
         calls.append(True)
         if len(calls) == 1:
             first_probe.set()
@@ -66,6 +67,7 @@ def test_unload_cannot_observe_partial_proxy_publication(monkeypatch):
     owner = Owner()
     original = isolation.weakref.finalize
     def finalize(instance, *args):
+        """Pause finalization for the selected owner before invoking the real finalizer."""
         if instance is owner:
             entered.set()
             assert release.wait(10)

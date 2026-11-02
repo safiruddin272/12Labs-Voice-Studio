@@ -497,9 +497,13 @@ test-only PR. Docker Hub overview edits still publish through the small
   - **Windows ROCm setup the user explicitly selects:** the initial sources
     approved on 2026-10-26 are `repo.radeon.com` SDK/PyTorch wheels and the HIP
     CTranslate2 archive from OpenNMT/CTranslate2 GitHub Releases. PR #3712
-    proposes the RDNA 2 additions for maintainer review: `stable.repo.amd.com`
+    implements a proposed RDNA 2 source-policy exception: `stable.repo.amd.com`
     wheels and the unmodified expanded-target dependency mirror under
-    `dutch2005/VoiceStudio`. Every artifact is SHA-256 pinned in
+    `dutch2005/VoiceStudio`. The exception is part of PR #3712's review and
+    requires explicit upstream maintainer acceptance before merge; development
+    integration/testing does not establish upstream approval. These hosts are
+    used only by user-selected RDNA 2 provisioning, never by readiness checks
+    or normal inference. Every artifact is SHA-256 pinned in
     `scripts/windows-rocm-recipe.json` and verified before use. This opt-in
     installer keeps every other package at its installed (locked) version and
     uses the usual package indexes only for anything new; verification

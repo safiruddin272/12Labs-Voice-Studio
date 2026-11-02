@@ -15,6 +15,7 @@ def gate(monkeypatch):
 
 @pytest.mark.parametrize("device", ["cpu", "cuda", "rocm", None])
 def test_whisperx_refuses_incompatible_openmp_before_device_probe(gate, monkeypatch, device):
+    """Reject incompatible WhisperX OpenMP libraries before generic device probing."""
     def forbidden(*args):
         pytest.fail("WhisperX touched the generic device gate before refusing unsafe CT2")
     monkeypatch.setattr(gate, "pipeline_error", forbidden)

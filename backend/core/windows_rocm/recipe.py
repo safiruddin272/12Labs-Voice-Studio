@@ -43,6 +43,7 @@ def detected_rdna2_arch():
 
 
 def _validate_artifacts(section):
+    """Reject unsafe artifact paths and incomplete or malformed SHA-256 pins."""
     hashes = section.get("wheel_sha256") or {}
     files = section["wheel_files"]
     if set(files) != set(hashes):

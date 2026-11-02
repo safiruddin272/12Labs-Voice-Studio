@@ -11,6 +11,7 @@ import pytest
     ("translation", "translation_backend", False),
 ])
 def test_direct_family_keeps_manual_choice_made_during_readiness(monkeypatch, family, key, environment):
+    """Preserve dictation or translation choices changed during readiness checks."""
     profiles = importlib.import_module("services.performance_profiles")
     prefs = importlib.import_module("core.prefs")
     values, writes = {}, []
@@ -22,6 +23,7 @@ def test_direct_family_keeps_manual_choice_made_during_readiness(monkeypatch, fa
         SimpleNamespace(id="preset-model", kind="offline-transducer", size_gb=1)])
 
     def ready(*args):
+        """Simulate a user changing a preference or environment selection during probing."""
         if environment:
             monkeypatch.setenv(key, "new-user-choice")
         else:
@@ -34,6 +36,7 @@ def test_direct_family_keeps_manual_choice_made_during_readiness(monkeypatch, fa
 
 
 def test_snapshot_copies_mutable_profile_without_retaining_its_live_dict(monkeypatch):
+    """Detect profile mutations through an independent selection snapshot."""
     selection = importlib.import_module("services.performance_selection")
     prefs = importlib.import_module("core.prefs")
     profile = {"global": "balanced"}

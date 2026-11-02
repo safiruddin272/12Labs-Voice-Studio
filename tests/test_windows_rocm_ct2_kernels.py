@@ -37,6 +37,7 @@ class View:
         return View(self.values, device, self.broken)
 
     def to(self, dtype):
+        """Simulate a successful cast or the native invalid-image kernel failure."""
         if self.broken:
             raise RuntimeError("parallel_for failed: hipErrorInvalidImage")
         return self
@@ -48,6 +49,7 @@ class View:
 
 @pytest.mark.parametrize("broken", [False, True])
 def test_native_cast_requires_an_executable_gpu_kernel(broken):
+    """Require a successful native GPU cast rather than accepting allocation alone."""
     module = importlib.import_module("core.windows_rocm.ct2_kernel")
     ct2 = SimpleNamespace(
         StorageView=SimpleNamespace(from_array=lambda a: View(a, broken=broken)),

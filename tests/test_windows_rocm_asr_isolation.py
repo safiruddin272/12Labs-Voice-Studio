@@ -46,6 +46,7 @@ raise SystemExit(main.main())
 
 @pytest.fixture
 def isolated(monkeypatch, tmp_path):
+    """Provide an isolated ASR backend backed by a deterministic local fake child."""
     from pathlib import Path
     from importlib import metadata
     ab = importlib.import_module("services.asr_backend")
@@ -86,6 +87,7 @@ def isolated(monkeypatch, tmp_path):
 
 
 def test_normal_backend_preserves_exact_model_options_and_result_in_child(isolated):
+    """Preserve decoding options, normalized results, and execution evidence across IPC."""
     engine = isolated()
     result = engine.transcribe("clip.wav", language="de", initial_prompt="names",
                                temperature=.2, task="translate")
@@ -121,6 +123,7 @@ def test_native_crash_fails_one_job_and_next_request_respawns(isolated):
 
 
 def test_gpu_memory_failure_keeps_cpu_fallback_and_reports_actual_device(isolated, monkeypatch):
+    """Report CPU execution and memory fallback evidence after a child GPU load failure."""
     monkeypatch.setenv("OMNIVOICE_DEVICE", "auto")
     engine = isolated("oom-snapshot")
     assert engine.transcribe("clip.wav")["language"] == "en"
@@ -177,6 +180,7 @@ def test_dropping_a_direct_backend_releases_its_owned_child(isolated):
 
 @pytest.mark.parametrize("fallback", [False, True])
 def test_error_reports_actual_cpu_device_without_torch_discovery(isolated, monkeypatch, fallback):
+    """Decorate child failures with the actual device without native Torch discovery."""
     transport = importlib.import_module("services.subprocess_asr")
     if fallback:
         monkeypatch.setenv("OMNIVOICE_DEVICE", "auto")

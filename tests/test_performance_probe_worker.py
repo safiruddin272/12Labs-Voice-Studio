@@ -15,6 +15,7 @@ def no_native_startup(monkeypatch):
 
 
 def test_worker_ct2_import_failure_disqualifies_optimistic_availability(monkeypatch):
+    """Reject optimistic ASR readiness when the actual CT2 import fails."""
     worker = importlib.import_module("services._performance_probe")
     asr = importlib.import_module("services.asr_backend")
     ct2 = importlib.import_module("core.windows_rocm.ct2")
@@ -23,6 +24,7 @@ def test_worker_ct2_import_failure_disqualifies_optimistic_availability(monkeypa
     original = importlib.import_module
 
     def unavailable(name, *args):
+        """Simulate a native faster-whisper import failure without blocking other modules."""
         if name == "faster_whisper":
             raise ImportError("native CT2 missing")
         return original(name, *args)
@@ -33,12 +35,14 @@ def test_worker_ct2_import_failure_disqualifies_optimistic_availability(monkeypa
 
 
 def test_auto_worker_retains_hardware_order_but_skips_unloadable_ct2(monkeypatch):
+    """Retain auto backend priority while skipping candidates that fail deep readiness."""
     worker = importlib.import_module("services._performance_probe")
     asr = importlib.import_module("services.asr_backend")
     monkeypatch.setattr(asr, "_probe_available", lambda cls: True)
     monkeypatch.setattr(worker, "_asr_ready", lambda asr, cls, probe=None: cls.id == "pytorch-whisper")
 
     def detect():
+        """Return the first available backend in the simulated hardware priority order."""
         for cls in (asr.WhisperXBackend, asr.FasterWhisperBackend, asr.PyTorchWhisperBackend):
             if asr._probe_available(cls):
                 return cls.id
@@ -48,6 +52,7 @@ def test_auto_worker_retains_hardware_order_but_skips_unloadable_ct2(monkeypatch
 
 
 def test_other_managed_families_use_deep_preflight_only(monkeypatch):
+    """Use family-specific deep checks for TTS, translation, and dictation readiness."""
     worker = importlib.import_module("services._performance_probe")
     calls = []
     monkeypatch.setitem(sys.modules, "services.tts_backend", SimpleNamespace(
@@ -78,6 +83,7 @@ def test_worker_retains_parent_deep_failure_exclusions(monkeypatch):
 
 
 def test_dll_search_precedes_tts_runtime_import(monkeypatch):
+    """Initialize DLL search paths before importing the TTS runtime."""
     import builtins
 
     worker = importlib.import_module("services._performance_probe")
@@ -87,6 +93,7 @@ def test_dll_search_precedes_tts_runtime_import(monkeypatch):
     original = builtins.__import__
 
     def ordered(name, *args, **kwargs):
+        """Assert DLL search initialization precedes TTS import and delegate the import."""
         if name == "services.tts_backend":
             assert initialized
         return original(name, *args, **kwargs)
@@ -99,6 +106,7 @@ def test_dll_search_precedes_tts_runtime_import(monkeypatch):
 
 @pytest.mark.parametrize("requested", ["faster-whisper-isolated", "auto"])
 def test_fresh_lazy_registry_resolves_isolated_readiness(monkeypatch, requested):
+    """Resolve an isolated backend from an initially unloaded lazy registry."""
     worker = importlib.import_module("services._performance_probe")
     asr = importlib.import_module("services.asr_backend")
     isolated = SimpleNamespace(id="faster-whisper-isolated")

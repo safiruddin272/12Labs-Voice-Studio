@@ -44,6 +44,7 @@ def test_faster_whisper_inventory_never_enumerates_or_imports_all_engines(monkey
 
 
 def test_cached_tts_inventory_does_not_call_model_runtime_availability(monkeypatch):
+    """Build cached TTS inventory without importing or probing model runtimes."""
     inventory = importlib.import_module("services.performance_inventory")
     profiles = importlib.import_module("services.performance_profiles")
     models = importlib.import_module("api.routers.setup.models")
@@ -83,6 +84,7 @@ def test_cached_tts_inventory_does_not_call_model_runtime_availability(monkeypat
 
 
 def test_profile_auto_selection_does_not_execute_asr_availability_imports(monkeypatch):
+    """Resolve profile auto selections without executing heavy ASR availability imports."""
     profiles = importlib.import_module("services.performance_profiles")
     inventory = importlib.import_module("services.performance_inventory")
     asr = importlib.import_module("services.asr_backend")
