@@ -8,7 +8,7 @@ class PipelineCompatibilityError(ImportError):
 
 def whisperx_error(device=None):
     """WhisperX shares Torch's process; ROCm 10 CT2 CPU fallback is unsafe."""
-    from .asr_isolation import isolation_required
+    from .isolation_policy import isolation_required
 
     if isolation_required():
         return (

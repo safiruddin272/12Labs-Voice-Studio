@@ -159,7 +159,7 @@ def test_preset_recovers_from_an_unavailable_network_translator(monkeypatch):
     monkeypatch.setattr(
         translation_engines,
         "is_ready",
-        lambda engine: engine in {"argos", "nllb"},
+        lambda engine, **_kw: engine in {"argos", "nllb"},
     )
 
     result = profiles.activate_performance_tier("max", "translation")
@@ -180,7 +180,7 @@ def test_preset_keeps_a_ready_explicit_network_translator(monkeypatch):
     writes = []
     monkeypatch.setattr(prefs, "get", lambda key, default=None: "google")
     monkeypatch.setattr(prefs, "set_", lambda key, value: writes.append((key, value)))
-    monkeypatch.setattr(translation_engines, "is_ready", lambda engine: engine == "google")
+    monkeypatch.setattr(translation_engines, "is_ready", lambda engine, **_kw: engine == "google")
 
     assert profiles.activate_performance_tier("max", "translation") == {}
     assert writes == []
@@ -193,7 +193,7 @@ def test_preset_uses_the_remaining_ready_local_translator(monkeypatch):
     writes = []
     monkeypatch.setattr(prefs, "get", lambda key, default=None: "google")
     monkeypatch.setattr(prefs, "set_", lambda key, value: writes.append((key, value)))
-    monkeypatch.setattr(translation_engines, "is_ready", lambda engine: engine == "argos")
+    monkeypatch.setattr(translation_engines, "is_ready", lambda engine, **_kw: engine == "argos")
 
     result = profiles.activate_performance_tier("max", "translation")
 
@@ -271,8 +271,9 @@ def test_tier_applies_to_the_omnivoice_sidecar(monkeypatch):
 @pytest.fixture
 def metal_host(monkeypatch):
     from api.routers.setup import models
-    from services import asr_backend
+    from services import asr_backend, performance_readiness
 
+    monkeypatch.setattr(performance_readiness, "package_available", lambda name: True)
     monkeypatch.delenv("ASR_MODEL", raising=False)
     monkeypatch.setattr(asr_backend, "_mps_available", lambda: True)
     monkeypatch.setattr(asr_backend, "_probe_available", lambda cls: True)

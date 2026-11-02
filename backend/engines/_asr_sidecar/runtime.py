@@ -8,6 +8,7 @@ _fallback_reason = _fallback_stage = None
 
 
 def _ct_candidates(device):
+    """Preserve explicit precision or use the established device fallback order."""
     override = os.environ.get("ASR_COMPUTE_TYPE")
     if override:
         return [override]
@@ -15,11 +16,13 @@ def _ct_candidates(device):
 
 
 def _is_ct_error(message):
+    """Recognize precision failures that permit trying the next compute type."""
     low = message.lower()
     return "compute type" in low or "efficient float16" in low
 
 
 def get_model(configuration=None):
+    """Reuse the selected model or load it with verified device and CPU fallback."""
     global _model, _identity, _fallback_reason, _fallback_stage
     from core.windows_rocm.asr_isolation import worker_device, isolation_required
 
@@ -75,6 +78,7 @@ def get_model(configuration=None):
 
 
 def execution_evidence():
+    """Return the loaded native model's device, precision and fallback facts."""
     native = getattr(_model, "model", None)
     return {"device": getattr(native, "device", None),
             "compute_type": getattr(native, "compute_type", None),

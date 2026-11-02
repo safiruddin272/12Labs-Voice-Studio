@@ -2,6 +2,7 @@
 
 
 def request_options(request):
+    """Reject malformed or unknown per-request Whisper decoding settings."""
     options = request or {}
     if not isinstance(options, dict):
         raise ValueError("Invalid ASR request options")
@@ -22,6 +23,7 @@ def request_options(request):
 
 
 def validate_configuration(configuration):
+    """Validate the exact model, VAD and device contract sent by the proxy."""
     if configuration is None:
         return None
     if (not isinstance(configuration, dict) or set(configuration) != {"model", "vad_filter", "device"}
@@ -36,6 +38,7 @@ def validate_configuration(configuration):
 
 def transcribe(get_model, audio_path, word_timestamps, decode_options=None,
                request=None, configuration=None):
+    """Run validated decoding and retain the normal backend's result fields."""
     options = decode_options or {}
     if not isinstance(options, dict) or any(
         key not in {"beam_size", "best_of"} or type(value) is not int or not 1 <= value <= 8

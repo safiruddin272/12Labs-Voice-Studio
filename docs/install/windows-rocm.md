@@ -141,12 +141,21 @@ inference are reported as different scopes.
 
 | Path | Windows ROCm behavior |
 | --- | --- |
-| Main Torch TTS and voice-cloning audio input | Uses the matched main environment; local soundfile compatibility preserves explicit soundfile input on torchaudio 2.9 and later. Model/engine kernels still need real hardware testing. |
+| Main Torch TTS and voice-cloning audio input | Uses the matched main environment. RX 6700 XT tests pass native OmniVoice TTS and synthetic-reference cloning on GPU/fp16 at 16 steps, plus CPU/fp32 TTS at four steps with four Torch threads. Reference audio retains explicit soundfile compatibility on torchaudio 2.9 and later. Speaker similarity and other engines need their own tests. |
+| PyTorch Whisper | The matched opt-in Windows Torch recipe advertises ROCm independently of CT2. Both transcription APIs pass on RX 6700 XT GPU/fp16 and CPU/fp32 using tiny.en; runtime evidence reports the actual pipeline device and dtype. English-only checkpoints accept English transcription without pretending to support translation. |
 | Faster-whisper, including the crash-isolated worker | GPU is admitted only for the pinned HIP binary plus bounded local verification. ROCm 10 runs normal faster-whisper in a separate inference process for both GPU and CPU, preserving CPU selection and memory fallback without mixing Torch's LLVM OpenMP with CT2's Intel OpenMP. Model, VAD, timestamps and decode/request options are preserved. |
 | WhisperX transcription | ROCm 10 refuses this in-process CT2 path before imports or cached pipeline use because its CPU execution/fallback mixes incompatible OpenMP runtimes. Use faster-whisper or PyTorch Whisper. The ROCm 7 recipe retains its existing CPU path; GPU execution remains unverified. |
 | pyannote speaker detection, wav2vec2 alignment | GPU execution is gated before imports/cached pipelines: MIOpen Unicode-path and SDK-header compatibility is unverified. CPU selection retains the existing Torch pipeline; it is separate from WhisperX's CT2 transcription and is not certified by the basic-ASR tests. |
 | Unavailable forced alignment | Keeps the transcript and native word timestamps; alignment precision can be lower. It does not discard requested speech or translation content. |
 | Optional engine sidecars | Separate environments and compatibility. Main readiness never certifies them. |
+
+These are short offline API tests, not a full hardware/quality certification.
+The 16-step CPU-only OmniVoice test exceeded a five-minute test deadline;
+four-step CPU speech completed and transcribed correctly, but was much slower
+than GPU execution. Model loading and AudioSeal startup are separate from warm
+generation. Startup performance inventory checks package/model metadata rather
+than importing Transformers or every installed model runtime; real execution
+still performs its normal load-time validation.
 
 IndexTTS keeps its Python 3.10/3.11 requirement; CosyVoice keeps Torch 2.7;
 VoxCPM2 keeps Torch 2.11. Neither cp312 main-environment recipe is applied to these

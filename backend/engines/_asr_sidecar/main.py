@@ -42,6 +42,7 @@ except Exception:  # noqa: BLE001 — best-effort; never block the ready handsha
 
 
 def _send(stream, obj):
+    """Write one flushed JSON frame to the dedicated protocol stream."""
     body = json.dumps(obj, separators=(",", ":")).encode("utf-8")
     stream.write(struct.pack("!I", len(body)))
     stream.write(body)
@@ -49,6 +50,7 @@ def _send(stream, obj):
 
 
 def _recv(stream):
+    """Read one bounded request frame or return None at clean EOF."""
     header = stream.read(4)
     if len(header) < 4:
         return None
@@ -72,11 +74,13 @@ from engines._asr_sidecar.runtime import execution_evidence
 
 def _transcribe(audio_path, word_timestamps, decode_options=None,
                 request_options=None, configuration=None):
+    """Decode one frame through the shared, replaceable model loader."""
     return _decode(_get_model, audio_path, word_timestamps, decode_options,
                    request_options, configuration)
 
 
 def main() -> int:
+    """Serve ASR requests while keeping native stdout outside protocol frames."""
     stdin = sys.stdin.buffer
     # Frames go down a PRIVATE fd, and fd 1 is pointed at stderr (#1428).
     #

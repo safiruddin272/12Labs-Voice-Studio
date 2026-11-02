@@ -22,6 +22,8 @@ def local_inventory(monkeypatch):
     from api.routers.setup import models
     from core import prefs
     from services import tts_backend, engine_routing, sherpa_dictation, translation_engines, diarization_runtime
+    readiness = importlib.import_module("services.performance_readiness")
+    monkeypatch.setattr(readiness, "package_available", lambda name: True)
 
     for key in ("OMNIVOICE_TTS_BACKEND", "OMNIVOICE_MODEL", "OMNIVOICE_KITTENTTS_MODEL",
                 "OMNIVOICE_ASR_BACKEND", "OMNIVOICE_SHERPA_ASR_MODEL", "OMNIVOICE_DIARIZATION_BACKEND"):
@@ -91,10 +93,8 @@ def test_incomplete_omni_is_not_selected(local_inventory, monkeypatch):
     assert entry["reason"] == "installed"
 
 
-def test_unavailable_omni_runtime_is_not_selected(local_inventory, monkeypatch):
-    from services import tts_backend
-    monkeypatch.setattr(tts_backend, "get_backend_class", lambda engine: SimpleNamespace(
-        is_available=lambda: (engine == "kittentts", "missing")))
+def test_missing_omni_package_is_not_selected(local_inventory, monkeypatch):
+    monkeypatch.setattr(inventory, "tts_installed", lambda engine: engine == "kittentts")
     assert inventory.profile_plan("max", {}, local_inventory)["families"]["tts"]["selection"]["engine"] == "kittentts"
 
 

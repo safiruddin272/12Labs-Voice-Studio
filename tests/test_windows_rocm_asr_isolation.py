@@ -23,6 +23,9 @@ def hip_ready():
         raise AssertionError("CPU selection probed the GPU")
     return os.environ.get("ASR_TEST_HIP_READY", "1") == "1"
 ct2.hip_ct2_available = hip_ready
+from core.windows_rocm import asr_isolation
+# Parent platform/metadata monkeypatches do not cross this process boundary.
+asr_isolation.isolation_required = lambda: True
 class Model:
     def __init__(self, source, device, compute_type):
         if "oom" in source and device == "cuda":

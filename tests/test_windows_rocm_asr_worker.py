@@ -17,9 +17,10 @@ import pytest
 def test_worker_never_imports_torch_and_requires_its_own_gpu_gate(
         monkeypatch, parent, override, verified, want):
     isolation = importlib.import_module("core.windows_rocm.asr_isolation")
+    policy = importlib.import_module("core.windows_rocm.isolation_policy")
     ct2 = importlib.import_module("core.windows_rocm.ct2")
-    monkeypatch.setattr(isolation.sys, "platform", "win32")
-    monkeypatch.setattr(isolation.metadata, "version", lambda name: "2.13.0+rocm10.0.0")
+    monkeypatch.setattr(policy.sys, "platform", "win32")
+    monkeypatch.setattr(policy.metadata, "version", lambda name: "2.13.0+rocm10.0.0")
     monkeypatch.setenv("OMNIVOICE_DEVICE", override)
     def gate():
         if parent == "cpu" or override == "cpu":
@@ -42,9 +43,10 @@ def test_worker_never_imports_torch_and_requires_its_own_gpu_gate(
 ])
 def test_other_runtimes_retain_in_process_execution(monkeypatch, platform, version):
     isolation = importlib.import_module("core.windows_rocm.asr_isolation")
+    policy = importlib.import_module("core.windows_rocm.isolation_policy")
     ab = importlib.import_module("services.asr_backend")
     monkeypatch.setattr(sys, "platform", platform)
-    monkeypatch.setattr(isolation.metadata, "version", lambda name: version)
+    monkeypatch.setattr(policy.metadata, "version", lambda name: version)
     assert not isolation.isolation_required()
     assert isolation.worker_device() is None
     assert isolation.availability_status() is None

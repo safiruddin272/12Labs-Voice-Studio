@@ -1,17 +1,11 @@
 """Keep ROCm 10 Torch and CT2's incompatible OpenMP runtimes apart."""
-import sys
 import weakref
-from importlib import metadata, util
+from importlib import util
+from threading import Lock
 
+from .isolation_policy import isolation_required
 
-def isolation_required():
-    """The existing ROCm 7, CUDA and other-platform paths stay unchanged."""
-    if sys.platform != "win32":
-        return False
-    try:
-        return "+rocm10." in metadata.version("torch").lower()
-    except metadata.PackageNotFoundError:
-        return False
+_PROXY_LOCK = Lock()
 
 
 def worker_device(parent_device=None):
@@ -41,6 +35,23 @@ def availability_status():
 
 
 def _proxy(owner):
+    """Concurrent first use must publish exactly one owned worker."""
+    with _owner_lock(owner):
+        return _proxy_locked(owner)
+
+
+def _owner_lock(owner):
+    """Allocate one lifecycle lock without serializing unrelated engine loads."""
+    with _PROXY_LOCK:
+        lock = getattr(owner, "_rocm_asr_lifecycle_lock", None)
+        if lock is None:
+            lock = Lock()
+            owner._rocm_asr_lifecycle_lock = lock
+        return lock
+
+
+def _proxy_locked(owner):
+    """Bind one model source and cleanup callback while creation is serialized."""
     proxy = getattr(owner, "_rocm_asr_proxy", None)
     if proxy is None:
         from services.asr_backend import _local_model_source, _ctranslate2_cuda_ok
@@ -55,6 +66,7 @@ def _proxy(owner):
 
 
 def ensure_isolated(owner):
+    """Initialize owned transport only for the affected native runtime."""
     if not isolation_required():
         return False
     _proxy(owner).ensure_loaded()
@@ -62,18 +74,33 @@ def ensure_isolated(owner):
 
 
 def transcribe_isolated(owner, audio_path, **options):
+    """Preserve the normal backend contract and record actual worker execution."""
     if not isolation_required():
         return None
     proxy = _proxy(owner)
     result = proxy.transcribe(audio_path, **options)
-    owner._device = proxy.execution_device
-    owner._compute_type = proxy.execution_precision
-    owner._fallback_reason = proxy.fallback_reason
-    owner._fallback_stage = proxy.fallback_stage
+    with _owner_lock(owner):
+        if getattr(owner, "_rocm_asr_proxy", None) is proxy:
+            owner._device = proxy.execution_device
+            owner._compute_type = proxy.execution_precision
+            owner._fallback_reason = proxy.fallback_reason
+            owner._fallback_stage = proxy.fallback_stage
     return result
 
 
 def unload_isolated(owner):
+    """Retire idle delegates without interrupting a job holding the worker."""
+    lock = _owner_lock(owner)
+    if not lock.acquire(blocking=False):
+        return True  # Initialization is still publishing a coherent owner.
+    try:
+        return _unload_locked(owner)
+    finally:
+        lock.release()
+
+
+def _unload_locked(owner):
+    """Release the published proxy and its exact finalizer as one operation."""
     proxy = getattr(owner, "_rocm_asr_proxy", None)
     if proxy is not None:
         if not proxy.close():
@@ -85,5 +112,6 @@ def unload_isolated(owner):
 
 
 def evidence_loaded(owner):
+    """Report live model ownership rather than an intended device choice."""
     proxy = getattr(owner, "_rocm_asr_proxy", None)
     return proxy is not None and proxy.execution_evidence_loaded()

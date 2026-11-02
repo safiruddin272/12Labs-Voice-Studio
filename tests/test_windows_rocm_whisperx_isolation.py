@@ -8,7 +8,7 @@ import pytest
 @pytest.fixture
 def gate(monkeypatch):
     pipelines = importlib.import_module("core.windows_rocm.pipelines")
-    isolation = importlib.import_module("core.windows_rocm.asr_isolation")
+    isolation = importlib.import_module("core.windows_rocm.isolation_policy")
     monkeypatch.setattr(isolation, "isolation_required", lambda: True)
     return pipelines
 
@@ -23,7 +23,7 @@ def test_whisperx_refuses_incompatible_openmp_before_device_probe(gate, monkeypa
 
 
 def test_other_recipes_keep_the_existing_whisperx_gate(gate, monkeypatch):
-    isolation = importlib.import_module("core.windows_rocm.asr_isolation")
+    isolation = importlib.import_module("core.windows_rocm.isolation_policy")
     monkeypatch.setattr(isolation, "isolation_required", lambda: False)
     monkeypatch.setattr(gate, "pipeline_error", lambda device: f"prior gate: {device}")
     assert gate.whisperx_error("cpu") == "prior gate: cpu"

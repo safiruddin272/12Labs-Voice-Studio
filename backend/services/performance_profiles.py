@@ -5,6 +5,7 @@ import math
 import os
 
 from services.performance_budget import TIERS as _PERFORMANCE_TIERS
+from services.performance_readiness import inventory_only, package_available, asr_installed
 
 #: TTS engines whose sampling the performance tiers tune: native OmniVoice and
 #: the same model in its registered crash-isolated sidecar. The one source for
@@ -118,7 +119,7 @@ def _installed_mlx_whisper_model() -> dict | None:
 
     if not (
         asr_backend._mps_available()
-        and asr_backend._probe_available(asr_backend.MLXWhisperBackend)
+        and asr_installed(asr_backend.MLXWhisperBackend, asr_backend._DEEP_IMPORT_BROKEN)
     ):
         return None
     repo_id = asr_backend.mlx_whisper_model_id()
@@ -161,21 +162,10 @@ def _preset_asr_models(active_engine: str | None) -> list[tuple[str, dict]]:
 def _faster_whisper_backend() -> str | None:
     from services import asr_backend
 
-    if asr_backend._probe_available(asr_backend.FasterWhisperBackend):
+    if asr_installed(asr_backend.FasterWhisperBackend, asr_backend._DEEP_IMPORT_BROKEN):
         return "faster-whisper"
-    row = next(
-        (
-            item
-            for item in asr_backend.list_backends()
-            if item["id"] == "faster-whisper-isolated"
-        ),
-        None,
-    )
-    return (
-        "faster-whisper-isolated"
-        if row and row.get("available") and row.get("routing_status") != "unavailable"
-        else None
-    )
+    cls = asr_backend._REGISTRY["faster-whisper-isolated"]
+    return "faster-whisper-isolated" if asr_installed(cls, asr_backend._DEEP_IMPORT_BROKEN) else None
 
 
 def _dictation_supports_locale(spec, language: str | None) -> bool:
@@ -241,12 +231,11 @@ def _activate_asr_model(tier: str) -> dict | None:
 
 def _activate_dictation_model(tier: str) -> dict | None:
     from core import prefs
-    from services import asr_backend, sherpa_dictation
+    from services import asr_backend
 
     if os.environ.get("OMNIVOICE_SHERPA_ASR_MODEL"):
         return None
-    available, _ = sherpa_dictation.sherpa_available()
-    if not available:
+    if not package_available("sherpa_onnx"):
         return None
     model = _tier_choice(
         _installed_dictation_models(), tier, size=lambda item: item.size_gb
@@ -268,15 +257,15 @@ def _activate_translation_model(tier: str) -> dict | None:
     # Keep a usable explicitly chosen network provider. A stale provider whose
     # package/key disappeared must not strand Dubbing while an installed local
     # translator is ready.
-    if current not in {"argos", "nllb"} and translation_engines.is_ready(current):
+    if current not in {"argos", "nllb"} and translation_engines.is_ready(current, import_check=False):
         return None
     target = str(_PERFORMANCE_TARGETS["translation"][tier]["engine"])
-    if not translation_engines.is_ready(target):
+    if not translation_engines.is_ready(target, import_check=False):
         target = next(
             (
                 candidate
                 for candidate in ("argos", "nllb")
-                if translation_engines.is_ready(candidate)
+                if translation_engines.is_ready(candidate, import_check=False)
             ),
             "",
         )
@@ -291,15 +280,14 @@ def _activate_translation_model(tier: str) -> dict | None:
 
 
 def _installed_selectable_families() -> set[str]:
-    from services import sherpa_dictation, translation_engines
+    from services import translation_engines
 
     families: set[str] = set()
     if _installed_asr_models():
         families.add("asr")
-    sherpa_available, _ = sherpa_dictation.sherpa_available()
-    if sherpa_available and _installed_dictation_models():
+    if package_available("sherpa_onnx") and _installed_dictation_models():
         families.add("dictation")
-    if translation_engines.is_ready("nllb"):
+    if translation_engines.is_ready("nllb", import_check=False):
         families.add("translation")
     return families
 
@@ -321,6 +309,7 @@ def _activate_installed_models(tier: str, family: str | None) -> dict[str, dict]
 
 
 
+@inventory_only
 def profile_state(choice: str | None = None) -> dict:
     from core import prefs
     from services import asr_backend, diarization_runtime
@@ -460,6 +449,7 @@ def requested_tier(family: str) -> str | None:
     return tier if tier in _PERFORMANCE_TIERS else None
 
 
+@inventory_only
 def activate_maximum_capacity_models(family: str | None = None) -> dict:
     """Select the strongest already-installed compatible local models.
 
@@ -470,6 +460,7 @@ def activate_maximum_capacity_models(family: str | None = None) -> dict:
     return _activate_installed_models("max", family)
 
 
+@inventory_only
 def activate_performance_tier(tier: str, family: str | None = None) -> dict:
     """Apply installed-only model/runtime selections implied by a preset."""
     if family is None:

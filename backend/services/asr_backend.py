@@ -1147,6 +1147,7 @@ class FasterWhisperBackend(ASRBackend):
 
     @classmethod
     def runtime_runs_out_of_process(cls):
+        """Report automatic Windows ROCm 10 inference containment."""
         from core.windows_rocm.asr_isolation import isolation_required
 
         return isolation_required()
@@ -1368,6 +1369,7 @@ class FasterWhisperBackend(ASRBackend):
             pass
 
     def execution_evidence_loaded(self) -> bool:
+        """Check the live delegate when this instance uses isolated inference."""
         from core.windows_rocm.asr_isolation import isolation_required, evidence_loaded
 
         if isolation_required() or getattr(self, "_rocm_asr_proxy", None) is not None:
@@ -1501,12 +1503,31 @@ class PyTorchWhisperBackend(ASRBackend):
     id = "pytorch-whisper"
     display_name = "PyTorch Whisper (CUDA / CPU via transformers pipeline)"
     # Pure transformers pipeline → runs wherever torch does (CUDA, MPS, CPU).
-    # ROCm-via-HIP would also work but is left unclaimed pending verification.
+    # The matched opt-in Windows HIP recipe adds ROCm dynamically below.
     gpu_compat = ("cuda", "mps", "cpu")
+
+    @classmethod
+    def runtime_gpu_compat(cls):
+        """Include only the qualified opt-in Windows HIP runtime in GPU claims."""
+        from core.windows_rocm.torch_asr import gpu_compatible
+
+        return gpu_compatible(cls.gpu_compat)
 
     def __init__(self, asr_pipe=None):
         # Reuses the `_asr_pipe` attached to the TTS model when available.
         self._pipe = asr_pipe
+
+    @property
+    def execution_device(self):
+        """Read the loaded pipeline's execution device rather than its intent."""
+        device = getattr(self._pipe, "device", None)
+        return str(device) if device is not None else None
+
+    @property
+    def dtype(self):
+        """Read actual model parameter precision for execution diagnostics."""
+        dtype = getattr(getattr(self._pipe, "model", None), "dtype", None)
+        return str(dtype) if dtype is not None else None
 
     # Free VRAM needed on CUDA, where _ensure_pipe loads fp16 weights: the
     # weights (parameters x 2 bytes), the batch-16 decode workspace, and
@@ -1559,11 +1580,9 @@ class PyTorchWhisperBackend(ASRBackend):
 
     @classmethod
     def is_available(cls) -> tuple[bool, str]:
-        try:
-            import transformers  # noqa: F401
-            return True, "ready"
-        except ImportError as e:
-            return False, f"transformers not installed: {e}"
+        from services.pytorch_whisper_options import dependency_status
+
+        return dependency_status()
 
     @classmethod
     def _pick_device(cls, model_name: str | None = None) -> str:
@@ -1614,7 +1633,12 @@ class PyTorchWhisperBackend(ASRBackend):
         # When the TTS model already has an ASR head, dub_core passes it via the
         # constructor and this path is skipped.
         import torch
-        from transformers import pipeline as hf_pipeline
+        try:
+            from transformers import pipeline as hf_pipeline
+        except ImportError as exc:
+            # Keep ImportError for deep-load fallback, but do not relabel an
+            # installed package's broken transitive import as an absent package.
+            raise ImportError(f"PyTorch Whisper could not load Transformers pipeline: {exc}") from exc
         model_name = self._model_name()
         device = self._pick_device(model_name)
         asr_dtype = torch.float16 if str(device).startswith("cuda") else torch.float32
@@ -1735,6 +1759,10 @@ class PyTorchWhisperBackend(ASRBackend):
     def supports_translation(self) -> bool:
         # A reused TTS-model ASR head may differ from the env default: ask the
         # loaded pipeline first.
+        from services.pytorch_whisper_options import english_only
+
+        if english_only(self._pipe):
+            return False
         loaded = getattr(getattr(self._pipe, "model", None), "name_or_path", None)
         return whisper_checkpoint_translates(loaded or self._model_name())
 
@@ -1745,6 +1773,9 @@ class PyTorchWhisperBackend(ASRBackend):
         # transformers' Whisper generate() takes language/task; a prompt needs
         # tokenizer-specific prompt_ids, so it is not advertised here.
         generate_kwargs = whisper_request_options(language, None, None, task)
+        from services.pytorch_whisper_options import generation_options
+
+        generate_kwargs = generation_options(self._pipe, generate_kwargs)
         # #2039: libsndfile cannot open MP4/M4A (AAC), which /transcribe and
         # the MCP tool both accept. Those decode through the validated ffmpeg
         # path, which resamples to 16 kHz properly. Anything soundfile can
@@ -2968,6 +2999,10 @@ def _probe_available(cls) -> bool:
     lib that refuses to load — CTranslate2's exec-stack rejection, #692) means the
     engine is unusable on this host, so treat it as unavailable and fall through
     to the next candidate rather than crash engine selection."""
+    from services.performance_readiness import inventory_active, asr_installed
+
+    if inventory_active():
+        return asr_installed(cls, _DEEP_IMPORT_BROKEN)
     if getattr(cls, "id", None) in _DEEP_IMPORT_BROKEN:
         # A previous load proved this backend's deep import chain is broken
         # (#1185) — the shallow probe would succeed, so consult the record

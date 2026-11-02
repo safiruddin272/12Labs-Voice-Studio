@@ -113,8 +113,9 @@ Desktop and phone installers are on the [latest release](https://github.com/debp
 Experimental [Windows ROCm setup](docs/install/windows-rocm.md) also supports
 RDNA 2 RX 6000 GPUs. Its separately pinned CTranslate2 build includes native
 `gfx1031` kernels for RX 6700 XT transcription; setup checks actual GPU kernel
-execution. ROCm 10 faster-whisper uses a separate inference process to preserve
-safe CPU selection and fallback. Other cards and workloads retain the qualification limits in the guide.
+execution. RX 6700 XT tests also cover native Torch speech generation and
+PyTorch Whisper. ROCm 10 faster-whisper uses a separate inference process to
+preserve safe CPU selection and fallback. Other cards and workloads retain the qualification limits in the guide.
 
 ## Get started
 
