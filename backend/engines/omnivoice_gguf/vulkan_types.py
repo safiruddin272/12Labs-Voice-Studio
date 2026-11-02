@@ -1,8 +1,12 @@
 """Native Vulkan adapter identities and conservative memory budgeting."""
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass, field
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
+
+if TYPE_CHECKING:
+    from core.gpu_inventory import HostGPU
 
 DeviceType = Literal["DISCRETE_GPU", "INTEGRATED_GPU"]
 APU_MIN_SYSTEM_RAM_GB = 16.0
@@ -98,7 +102,7 @@ def _vendor(vendor_id: int | None, name: str) -> str:
     return "other"
 
 
-def adapters_from_inventory(gpus, ram_gb: float) -> tuple[VulkanAdapter, ...]:
+def adapters_from_inventory(gpus: Iterable[HostGPU], ram_gb: float) -> tuple[VulkanAdapter, ...]:
     """GGML's list built from the OS GPU inventory, for hosts without
     ``vulkaninfo``. Physical order is the inventory's (registry / DRM card)
     order — the closest available stand-in for Vulkan enumeration order."""
@@ -116,7 +120,7 @@ def adapters_from_inventory(gpus, ram_gb: float) -> tuple[VulkanAdapter, ...]:
     return tuple(out)
 
 
-def with_inventory_memory(devices: list[dict], gpus) -> list[dict]:
+def with_inventory_memory(devices: list[dict], gpus: Iterable[HostGPU]) -> list[dict]:
     """Fill missing heaps only for a unique vendor/name identity on both sides.
 
     Vulkan still proves the driver, type, and numbering. OS inventory supplies
@@ -125,6 +129,7 @@ def with_inventory_memory(devices: list[dict], gpus) -> list[dict]:
     import math
 
     def key(vendor, name):
+        """Normalize whitespace/case without conflating different GPU names."""
         return vendor, " ".join(name.split()).casefold()
 
     native_keys = [key(_vendor(d.get("vendor_id"), d.get("name", "")), d.get("name", ""))

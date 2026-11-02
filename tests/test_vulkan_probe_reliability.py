@@ -18,15 +18,18 @@ SUMMARY = """GPU0:
 
 
 def module():
+    """Resolve discovery after other tests may have replaced imported modules."""
     return importlib.import_module("engines.omnivoice_gguf.vulkan_auto")
 
 
 def test_hidden_full_report_timeout_uses_summary(monkeypatch):
+    """A presentation-surface timeout must still allow native GPU enumeration."""
     auto = module()
     calls = []
     monkeypatch.setattr(shutil, "which", lambda _: "vulkaninfo")
 
     def run(args, **kwargs):
+        """Simulate a stalled full report and a working surface-free summary."""
         calls.append(args)
         if "--summary" not in args:
             raise subprocess.TimeoutExpired(args, kwargs["timeout"])
@@ -38,6 +41,7 @@ def test_hidden_full_report_timeout_uses_summary(monkeypatch):
 
 
 def test_failed_probe_output_is_not_verified(monkeypatch):
+    """Nonzero native exits cannot lend credibility to their partial output."""
     auto = module()
     monkeypatch.setattr(shutil, "which", lambda _: "vulkaninfo")
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs:
@@ -46,6 +50,7 @@ def test_failed_probe_output_is_not_verified(monkeypatch):
 
 
 def test_failed_native_probes_keep_inventory_sizing_without_gpu_promotion(monkeypatch):
+    """Inventory can size a quant but cannot shorten timeouts or offer the GPU."""
     auto = module()
     compute = importlib.import_module("engines.omnivoice_gguf.compute")
     inventory = importlib.import_module("core.gpu_inventory")
@@ -84,6 +89,7 @@ def test_failed_native_probes_keep_inventory_sizing_without_gpu_promotion(monkey
     ("amd", "AMD Radeon RX 7600", 8, 0),
 ])
 def test_verified_summary_uses_only_matching_os_memory(monkeypatch, vendor, name, memory, expected):
+    """Borrow capacity only when native and OS vendor/name identities agree."""
     auto = module()
     inventory = importlib.import_module("core.gpu_inventory")
     monkeypatch.setattr(auto, "_run_vulkaninfo", lambda: SUMMARY)
@@ -101,6 +107,7 @@ def test_verified_summary_uses_only_matching_os_memory(monkeypatch, vendor, name
 
 
 def test_duplicate_inventory_names_do_not_guess_memory(monkeypatch):
+    """Two matching inventory entries leave native memory unknown."""
     auto = module()
     inventory = importlib.import_module("core.gpu_inventory")
     monkeypatch.setattr(auto, "_run_vulkaninfo", lambda: SUMMARY)
@@ -116,6 +123,7 @@ def test_duplicate_inventory_names_do_not_guess_memory(monkeypatch):
 
 
 def test_windows_native_build_cannot_succeed_without_vulkan(tmp_path):
+    """Execute the Windows payload gate against a build with no Vulkan module."""
     root = Path(__file__).resolve().parents[1]
     workflow = yaml.safe_load((root / ".github/workflows/build-omnivoice-tts.yml").read_text())
     steps = workflow["jobs"]["build-omnivoice-tts"]["steps"]
@@ -133,6 +141,7 @@ def test_windows_native_build_cannot_succeed_without_vulkan(tmp_path):
 
 
 def test_physical_ram_probe_preserves_shared_memory_budget(monkeypatch):
+    """Read physical RAM in GiB so integrated GPUs retain shared-memory sizing."""
     import psutil
 
     monkeypatch.setattr(psutil, "virtual_memory", lambda: SimpleNamespace(total=64 * 1024 ** 3))
@@ -141,6 +150,7 @@ def test_physical_ram_probe_preserves_shared_memory_budget(monkeypatch):
 
 @pytest.mark.parametrize("second_uuid,expected", [("gpu-0", 12), ("gpu-1", 0)])
 def test_summary_counts_physical_gpus_not_duplicate_drivers(monkeypatch, second_uuid, expected):
+    """Duplicate driver UUIDs permit enrichment; distinct GPUs stay ambiguous."""
     auto = module()
     inventory = importlib.import_module("core.gpu_inventory")
     other = SUMMARY.replace("GPU0:", "GPU1:").replace("gpu-0", second_uuid)
@@ -159,11 +169,13 @@ def test_summary_counts_physical_gpus_not_duplicate_drivers(monkeypatch, second_
     ("full", 1, SUMMARY), ("summary", 2, SUMMARY), ("failed", 2, None),
 ])
 def test_probe_is_bounded_hidden_and_stops_after_success(monkeypatch, mode, count, expected):
+    """Enforce hidden bounded subprocesses and stop once native evidence succeeds."""
     auto = module()
     monkeypatch.setattr(shutil, "which", lambda _: "vulkaninfo")
     calls = []
 
     def run(args, **kwargs):
+        """Return success only for the requested full, summary or failed scenario."""
         calls.append((args, kwargs))
         success = mode == "full" or (mode == "summary" and "--summary" in args)
         return SimpleNamespace(stdout=SUMMARY if success else "", returncode=0 if success else 1)
